@@ -20,7 +20,7 @@ export default function FeedPage() {
   const { data: subtracks = [] } = useSubtracks();
 
   const { data: nextWorkout, isLoading: isWorkoutLoading } = useNextWorkout(
-    profile?.sport,
+    profile?.discipline,
     profile?.subtrack,
     profile?.id
   );
@@ -60,7 +60,7 @@ export default function FeedPage() {
           </button>
         </div>
 
-        {/* Inline subtrack switcher — filtered to current sport */}
+        {/* Inline subtrack switcher — filtered to current discipline */}
         <AnimatePresence>
           {switcherOpen && (
             <motion.div
@@ -71,7 +71,7 @@ export default function FeedPage() {
               className="rounded-2xl border border-white/10 bg-card/80 backdrop-blur overflow-hidden"
             >
               {subtracks
-                .filter(g => g.sport === profile?.sport)
+                .filter(g => g.discipline === profile?.discipline)
                 .flatMap(g => g.subtracks)
                 .map(track => {
                   const isActive = profile?.subtrack === track.id;

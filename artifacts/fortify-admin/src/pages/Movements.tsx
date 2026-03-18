@@ -8,7 +8,7 @@ import { useToast } from '@/components/Toast';
 import { CATEGORIES, DIFFICULTIES, extractYoutubeId } from '@/lib/utils';
 import type { Movement } from '@/lib/types';
 
-const SPORTS = ['crossfit', 'hyrox', 'athx'];
+const DISCIPLINES = ['crossfit', 'hyrox', 'athx'];
 
 interface FormState {
   id: string; name: string; category: string; subcategory: string; difficulty: string;
@@ -26,7 +26,7 @@ export function Movements() {
   const [rows, setRows] = useState<Movement[]>([]);
   const [loading, setLoading] = useState(true);
   const [catFilter, setCatFilter] = useState('all');
-  const [sportFilter, setSportFilter] = useState('all');
+  const [disciplineFilter, setDisciplineFilter] = useState('all');
   const [activeOnly, setActiveOnly] = useState(true);
   const [search, setSearch] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -84,7 +84,7 @@ export function Movements() {
 
   const filtered = rows
     .filter(r => catFilter === 'all' || r.category === catFilter)
-    .filter(r => sportFilter === 'all' || (r.tags ?? []).includes(sportFilter))
+    .filter(r => disciplineFilter === 'all' || (r.tags ?? []).includes(disciplineFilter))
     .filter(r => !activeOnly || r.is_active)
     .filter(r => !search || r.name.toLowerCase().includes(search.toLowerCase()));
 
@@ -104,9 +104,9 @@ export function Movements() {
         </div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', gap: 6 }}>
-            {['all', ...SPORTS].map(s => (
-              <button key={s} type="button" className={`btn btn-sm ${sportFilter === s ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setSportFilter(s)}>
-                {s === 'all' ? 'All Sports' : s}
+            {['all', ...DISCIPLINES].map(s => (
+              <button key={s} type="button" className={`btn btn-sm ${disciplineFilter === s ? 'btn-primary' : 'btn-secondary'}`} onClick={() => setDisciplineFilter(s)}>
+                {s === 'all' ? 'All Disciplines' : s}
               </button>
             ))}
           </div>

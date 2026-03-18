@@ -16,7 +16,7 @@ export function shortDate(date: string) {
   catch { return date; }
 }
 
-export const SPORT_SUBTRACKS: Record<string, { id: string; name: string }[]> = {
+export const DISCIPLINE_SUBTRACKS: Record<string, { id: string; name: string }[]> = {
   crossfit: [
     { id: 'overhead_shoulder_strength', name: 'Overhead & Shoulder' },
     { id: 'lower_body_strength', name: 'Lower Body Strength' },
@@ -43,7 +43,7 @@ export const CATEGORIES = [
 export const DIFFICULTIES = ['beginner', 'intermediate', 'advanced'];
 
 export function subtrackLabel(s: string) {
-  for (const [, subs] of Object.entries(SPORT_SUBTRACKS)) {
+  for (const [, subs] of Object.entries(DISCIPLINE_SUBTRACKS)) {
     const found = subs.find(x => x.id === s);
     if (found) return found.name;
   }

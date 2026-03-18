@@ -1,10 +1,10 @@
-export type Sport = 'crossfit' | 'hyrox' | 'athx';
+export type Discipline = string;
 export type Level = 'beginner' | 'intermediate' | 'advanced';
 
 export interface Profile {
   id: string;
   name: string;
-  sport: Sport;
+  discipline: Discipline;
   subtrack: string;
   level: Level;
   frequency: number;
@@ -24,7 +24,7 @@ export interface WorkoutExercise {
 
 export interface Workout {
   id: string;
-  sport: Sport;
+  discipline: Discipline;
   subtrack: string;
   week_number: number;
   day_number: number;
@@ -39,7 +39,7 @@ export interface Workout {
 export interface Session {
   id: string;
   user_id: string;
-  sport: Sport;
+  discipline: Discipline;
   subtrack: string;
   week_number: number;
   day_number: number;

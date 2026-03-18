@@ -22,7 +22,7 @@ export function Dashboard() {
       supabase.from('sessions').select('id', { count: 'exact', head: true }),
       supabase.from('sessions').select('id', { count: 'exact', head: true }).gte('completed_at', new Date(Date.now() - 7 * 86400000).toISOString()),
       supabase.from('personal_records').select('id', { count: 'exact', head: true }),
-      supabase.from('sessions').select('id, user_id, sport, subtrack, week_number, day_number, completed_at, profiles(name)').order('completed_at', { ascending: false }).limit(10),
+      supabase.from('sessions').select('id, user_id, discipline, subtrack, week_number, day_number, completed_at, profiles(name)').order('completed_at', { ascending: false }).limit(10),
       supabase.from('profiles').select('*').order('created_at', { ascending: false }).limit(10),
     ]);
     setStats({
@@ -57,12 +57,12 @@ export function Dashboard() {
           {loading ? <div style={{ padding: 16 }}><SkeletonTable rows={5} cols={4} /></div> : (
             <table className="data-table">
               <thead><tr>
-                <th>Athlete</th><th>Sport · Subtrack</th><th>Week / Day</th><th>Completed</th>
+                <th>Athlete</th><th>Discipline · Subtrack</th><th>Week / Day</th><th>Completed</th>
               </tr></thead>
               <tbody>{recentSessions.map(s => (
                 <tr key={s.id}>
                   <td>{s.profiles?.name ?? '—'}</td>
-                  <td><span className={`badge badge-${s.sport}`}>{s.sport}</span> <span style={{ color: '#888', fontSize: 12 }}>{s.subtrack?.replace(/_/g,' ')}</span></td>
+                  <td><span className={`badge badge-${s.discipline}`}>{s.discipline}</span> <span style={{ color: '#888', fontSize: 12 }}>{s.subtrack?.replace(/_/g,' ')}</span></td>
                   <td style={{ color: '#888' }}>W{s.week_number} D{s.day_number}</td>
                   <td style={{ color: '#888', fontSize: 12 }}>{relativeTime(s.completed_at)}</td>
                 </tr>
@@ -77,12 +77,12 @@ export function Dashboard() {
           {loading ? <div style={{ padding: 16 }}><SkeletonTable rows={5} cols={4} /></div> : (
             <table className="data-table">
               <thead><tr>
-                <th>Name</th><th>Sport</th><th>Level</th><th>Joined</th>
+                <th>Name</th><th>Discipline</th><th>Level</th><th>Joined</th>
               </tr></thead>
               <tbody>{recentUsers.map(u => (
                 <tr key={u.id}>
                   <td>{u.name}</td>
-                  <td><span className={`badge badge-${u.sport}`}>{u.sport}</span></td>
+                  <td><span className={`badge badge-${u.discipline}`}>{u.discipline}</span></td>
                   <td><span className={`badge badge-${u.level}`}>{u.level}</span></td>
                   <td style={{ color: '#888', fontSize: 12 }}>{relativeTime(u.created_at)}</td>
                 </tr>

@@ -7,8 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
-import { Sport } from '@/lib/types';
-import { useSubtracks, buildSportFromSubtrack } from '@/hooks/use-subtracks';
+import { useSubtracks, buildDisciplineFromSubtrack } from '@/hooks/use-subtracks';
 import { ALL_SUBTRACKS } from '@/lib/subtracks';
 
 export default function OnboardingPage() {
@@ -18,24 +17,24 @@ export default function OnboardingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { data: subtracks = ALL_SUBTRACKS } = useSubtracks();
-  const getSport = buildSportFromSubtrack(subtracks);
+  const getDiscipline = buildDisciplineFromSubtrack(subtracks);
 
   const [formData, setFormData] = useState({
     name: '',
     subtrack: '',
   });
 
-  const selectedSport = formData.subtrack ? getSport(formData.subtrack) : null;
+  const selectedDiscipline = formData.subtrack ? getDiscipline(formData.subtrack) : null;
 
   const handleSubmit = async () => {
     if (!user) return;
     setIsSubmitting(true);
     try {
-      const sport = getSport(formData.subtrack) as Sport;
+      const discipline = getDiscipline(formData.subtrack);
       const { error } = await supabase.from('profiles').insert([{
         id: user.id,
         name: formData.name,
-        sport,
+        discipline,
         subtrack: formData.subtrack,
         level: 'intermediate',
         frequency: 3,
@@ -114,8 +113,8 @@ export default function OnboardingPage() {
                 </div>
 
                 <div className="space-y-6">
-                  {subtracks.map(({ sport, label, subtracks: tracks }) => (
-                    <div key={sport}>
+                  {subtracks.map(({ discipline, label, subtracks: tracks }) => (
+                    <div key={discipline}>
                       <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">{label}</p>
                       <div className="space-y-2">
                         {tracks.map(track => (
@@ -140,9 +139,9 @@ export default function OnboardingPage() {
                   ))}
                 </div>
 
-                {selectedSport && (
+                {selectedDiscipline && (
                   <p className="text-xs text-center text-muted-foreground">
-                    Sport: <span className="text-primary font-semibold capitalize">{selectedSport}</span>
+                    Discipline: <span className="text-primary font-semibold capitalize">{selectedDiscipline}</span>
                   </p>
                 )}
 

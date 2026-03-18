@@ -6,7 +6,7 @@ const NAV = [
   { path: '/', label: 'Dashboard', icon: '⬛' },
   { path: '/workouts', label: 'Workouts', icon: '💪' },
   { path: '/movements', label: 'Movements', icon: '🏋️' },
-  { path: '/sports', label: 'Sports', icon: '🏅' },
+  { path: '/disciplines', label: 'Disciplines', icon: '🏅' },
   { path: '/subtracks', label: 'Subtracks', icon: '🎯' },
   { path: '/users', label: 'Users', icon: '👤' },
   { path: '/community', label: 'Community', icon: '💬' },

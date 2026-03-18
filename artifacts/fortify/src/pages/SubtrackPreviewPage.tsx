@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
 import { supabase } from '@/lib/supabase';
-import { useSubtracks, buildSportFromSubtrack } from '@/hooks/use-subtracks';
+import { useSubtracks, buildDisciplineFromSubtrack } from '@/hooks/use-subtracks';
 import { getSubtrackDetail } from '@/lib/subtrack-details';
 import { ALL_SUBTRACKS } from '@/lib/subtracks';
 import { Button } from '@/components/ui/button';
@@ -10,15 +10,8 @@ import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, Clock, Dumbbell, Target, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Sport } from '@/lib/types';
 
-const SPORT_LABELS: Record<string, string> = {
-  crossfit: 'CrossFit',
-  hyrox: 'Hyrox',
-  athx: 'ATHX',
-};
-
-const SPORT_COLORS: Record<string, string> = {
+const DISCIPLINE_COLORS: Record<string, string> = {
   crossfit: '#F05A28',
   hyrox: '#3b82f6',
   athx: '#a855f7',
@@ -32,11 +25,11 @@ export default function SubtrackPreviewPage() {
   const [confirming, setConfirming] = useState(false);
 
   const { data: subtracks = ALL_SUBTRACKS } = useSubtracks();
-  const getSport = buildSportFromSubtrack(subtracks);
+  const getDiscipline = buildDisciplineFromSubtrack(subtracks);
 
-  const sport = getSport(id);
-  const sportLabel = SPORT_LABELS[sport] ?? sport;
-  const sportColor = SPORT_COLORS[sport] ?? '#F05A28';
+  const discipline = getDiscipline(id);
+  const disciplineLabel = subtracks.find(g => g.discipline === discipline)?.label ?? discipline;
+  const disciplineColor = DISCIPLINE_COLORS[discipline] ?? '#F05A28';
 
   const subtrackInfo = subtracks
     .flatMap(g => g.subtracks)
@@ -51,7 +44,7 @@ export default function SubtrackPreviewPage() {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ subtrack: id, sport: getSport(id) as Sport })
+        .update({ subtrack: id, discipline: getDiscipline(id) })
         .eq('id', profile.id);
       if (error) throw error;
       await refreshProfile();
@@ -97,13 +90,13 @@ export default function SubtrackPreviewPage() {
         className="flex-1 px-5 pb-52 space-y-8"
       >
 
-        {/* Sport badge + Title */}
+        {/* Discipline badge + Title */}
         <div className="space-y-3">
           <div
             className="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest"
-            style={{ background: `${sportColor}20`, color: sportColor }}
+            style={{ background: `${disciplineColor}20`, color: disciplineColor }}
           >
-            {sportLabel}
+            {disciplineLabel}
           </div>
           <h1 className="text-4xl font-display uppercase tracking-wide text-white leading-tight">
             {subtrackInfo.name}
@@ -163,7 +156,7 @@ export default function SubtrackPreviewPage() {
             <ul className="space-y-3">
               {detail.goals.map((g, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: sportColor }} />
+                  <CheckCircle2 className="w-4 h-4 mt-0.5 shrink-0" style={{ color: disciplineColor }} />
                   <span className="text-sm text-white/80 leading-relaxed">{g}</span>
                 </li>
               ))}
@@ -195,7 +188,7 @@ export default function SubtrackPreviewPage() {
           ) : (
             <Button
               className="flex-1 h-14 text-base font-semibold"
-              style={{ background: `linear-gradient(135deg, ${sportColor}, ${sportColor}cc)` }}
+              style={{ background: `linear-gradient(135deg, ${disciplineColor}, ${disciplineColor}cc)` }}
               onClick={handleConfirm}
               disabled={confirming}
             >

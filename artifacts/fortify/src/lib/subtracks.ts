@@ -1,20 +1,18 @@
-import { Sport } from './types';
-
 export interface SubtrackInfo {
   id: string;
   name: string;
   desc: string;
 }
 
-export interface SportGroup {
-  sport: Sport;
+export interface DisciplineGroup {
+  discipline: string;
   label: string;
   subtracks: SubtrackInfo[];
 }
 
-export const ALL_SUBTRACKS: SportGroup[] = [
+export const ALL_SUBTRACKS: DisciplineGroup[] = [
   {
-    sport: 'crossfit',
+    discipline: 'crossfit',
     label: 'CrossFit',
     subtracks: [
       { id: 'overhead_shoulder_strength', name: 'Overhead & Shoulder', desc: 'Press strength and stability' },
@@ -23,7 +21,7 @@ export const ALL_SUBTRACKS: SportGroup[] = [
     ]
   },
   {
-    sport: 'hyrox',
+    discipline: 'hyrox',
     label: 'Hyrox',
     subtracks: [
       { id: 'sled_carry_strength', name: 'Sled & Carry Strength', desc: 'Push/pull force production' },
@@ -32,7 +30,7 @@ export const ALL_SUBTRACKS: SportGroup[] = [
     ]
   },
   {
-    sport: 'athx',
+    discipline: 'athx',
     label: 'ATHX',
     subtracks: [
       { id: 'explosive_power', name: 'Explosive Power', desc: 'Speed-strength and plyometrics' },
@@ -42,15 +40,15 @@ export const ALL_SUBTRACKS: SportGroup[] = [
   }
 ];
 
-const SUBTRACK_TO_SPORT: Record<string, Sport> = {};
+const SUBTRACK_TO_DISCIPLINE: Record<string, string> = {};
 for (const group of ALL_SUBTRACKS) {
   for (const sub of group.subtracks) {
-    SUBTRACK_TO_SPORT[sub.id] = group.sport;
+    SUBTRACK_TO_DISCIPLINE[sub.id] = group.discipline;
   }
 }
 
-export function sportFromSubtrack(subtrack: string): Sport {
-  return SUBTRACK_TO_SPORT[subtrack] ?? 'crossfit';
+export function disciplineFromSubtrack(subtrack: string): string {
+  return SUBTRACK_TO_DISCIPLINE[subtrack] ?? 'crossfit';
 }
 
 export function subtrackLabel(subtrack: string): string {

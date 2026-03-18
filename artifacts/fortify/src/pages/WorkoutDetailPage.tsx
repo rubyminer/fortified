@@ -58,7 +58,7 @@ export default function WorkoutDetailPage() {
       await completeWorkout({
         session: {
           user_id: user.id,
-          sport: workout.sport,
+          discipline: workout.discipline,
           subtrack: workout.subtrack,
           week_number: workout.week_number,
           day_number: workout.day_number,

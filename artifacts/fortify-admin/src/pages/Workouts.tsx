@@ -6,10 +6,10 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { SkeletonTable } from '@/components/Skeleton';
 import { MovementSearch } from '@/components/MovementSearch';
 import { useToast } from '@/components/Toast';
-import { SPORT_SUBTRACKS, subtrackLabel, shortDate } from '@/lib/utils';
+import { DISCIPLINE_SUBTRACKS, subtrackLabel, shortDate } from '@/lib/utils';
 import type { Workout, WorkoutExercise, Movement } from '@/lib/types';
 
-const SPORTS = ['crossfit', 'hyrox', 'athx'] as const;
+const DISCIPLINES = ['crossfit', 'hyrox', 'athx'] as const;
 
 function emptyExercise(): WorkoutExercise {
   return { movement_id: '', name: '', sets: 3, reps: '8', rpe_target: 7, rest_seconds: 90, description: '' };
@@ -61,20 +61,20 @@ function ExerciseBlock({ ex, onChange, onRemove }: {
 }
 
 interface FormState {
-  sport: string; subtrack: string; week_number: number; day_number: number;
+  discipline: string; subtrack: string; week_number: number; day_number: number;
   title: string; coach_note: string; warmup: string[];
   main_work: WorkoutExercise[]; accessory: WorkoutExercise[];
 }
 
 function defaultForm(): FormState {
-  return { sport: 'crossfit', subtrack: 'overhead_shoulder_strength', week_number: 1, day_number: 1, title: '', coach_note: '', warmup: [''], main_work: [emptyExercise()], accessory: [] };
+  return { discipline: 'crossfit', subtrack: 'overhead_shoulder_strength', week_number: 1, day_number: 1, title: '', coach_note: '', warmup: [''], main_work: [emptyExercise()], accessory: [] };
 }
 
 export function Workouts() {
   const { showToast } = useToast();
   const [rows, setRows] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sportFilter, setSportFilter] = useState('all');
+  const [disciplineFilter, setDisciplineFilter] = useState('all');
   const [subtrackFilter, setSubtrackFilter] = useState('all');
   const [search, setSearch] = useState('');
   const [sortCol, setSortCol] = useState<keyof Workout>('week_number');
@@ -99,7 +99,7 @@ export function Workouts() {
   function openEdit(w: Workout) {
     setEditId(w.id);
     setForm({
-      sport: w.sport, subtrack: w.subtrack, week_number: w.week_number, day_number: w.day_number,
+      discipline: w.discipline, subtrack: w.subtrack, week_number: w.week_number, day_number: w.day_number,
       title: w.title, coach_note: w.coach_note ?? '',
       warmup: (w.warmup ?? []).concat(''),
       main_work: (w.main_work ?? []).length ? (w.main_work ?? []) : [emptyExercise()],
@@ -112,7 +112,7 @@ export function Workouts() {
     if (!form.title.trim()) { showToast('Title is required', 'error'); return; }
     setSaving(true);
     const payload = {
-      sport: form.sport, subtrack: form.subtrack, week_number: form.week_number, day_number: form.day_number,
+      discipline: form.discipline, subtrack: form.subtrack, week_number: form.week_number, day_number: form.day_number,
       title: form.title, coach_note: form.coach_note || null,
       warmup: form.warmup.filter(w => w.trim()),
       main_work: form.main_work,
@@ -141,10 +141,10 @@ export function Workouts() {
     else { setSortCol(col); setSortAsc(true); }
   }
 
-  const subtracks = sportFilter !== 'all' ? (SPORT_SUBTRACKS[sportFilter] ?? []) : [];
+  const subtracks = disciplineFilter !== 'all' ? (DISCIPLINE_SUBTRACKS[disciplineFilter] ?? []) : [];
 
   const filtered = rows
-    .filter(r => sportFilter === 'all' || r.sport === sportFilter)
+    .filter(r => disciplineFilter === 'all' || r.discipline === disciplineFilter)
     .filter(r => subtrackFilter === 'all' || r.subtrack === subtrackFilter)
     .filter(r => !search || r.title.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
@@ -154,7 +154,7 @@ export function Workouts() {
       return 0;
     });
 
-  const formSubtracks = SPORT_SUBTRACKS[form.sport] ?? [];
+  const formSubtracks = DISCIPLINE_SUBTRACKS[form.discipline] ?? [];
 
   return (
     <Layout section="Workouts">
@@ -163,11 +163,11 @@ export function Workouts() {
         <button className="btn btn-primary" onClick={openNew}>+ New Workout</button>
       </div>
       <div className="filter-bar">
-        <select value={sportFilter} onChange={e => { setSportFilter(e.target.value); setSubtrackFilter('all'); }} style={{ width: 140 }}>
-          <option value="all">All Sports</option>
-          {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+        <select value={disciplineFilter} onChange={e => { setDisciplineFilter(e.target.value); setSubtrackFilter('all'); }} style={{ width: 160 }}>
+          <option value="all">All Disciplines</option>
+          {DISCIPLINES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
-        {sportFilter !== 'all' && (
+        {disciplineFilter !== 'all' && (
           <select value={subtrackFilter} onChange={e => setSubtrackFilter(e.target.value)} style={{ width: 200 }}>
             <option value="all">All Subtracks</option>
             {subtracks.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -179,7 +179,7 @@ export function Workouts() {
         {loading ? <div style={{ padding: 16 }}><SkeletonTable cols={6} /></div> : (
           <table className="data-table">
             <thead><tr>
-              {(['sport','subtrack','week_number','day_number','title','created_at'] as (keyof Workout)[]).map(col => (
+              {(['discipline','subtrack','week_number','day_number','title','created_at'] as (keyof Workout)[]).map(col => (
                 <th key={col} className="sortable" onClick={() => toggleSort(col)}>
                   {col.replace(/_/g,' ')} {sortCol === col ? (sortAsc ? '↑' : '↓') : ''}
                 </th>
@@ -188,7 +188,7 @@ export function Workouts() {
             <tbody>
               {filtered.map(w => (
                 <tr key={w.id} style={{ cursor: 'pointer' }} onClick={() => openEdit(w)}>
-                  <td><span className={`badge badge-${w.sport}`}>{w.sport}</span></td>
+                  <td><span className={`badge badge-${w.discipline}`}>{w.discipline}</span></td>
                   <td style={{ color: '#888', fontSize: 12 }}>{subtrackLabel(w.subtrack)}</td>
                   <td>W{w.week_number}</td>
                   <td>D{w.day_number}</td>
@@ -214,9 +214,9 @@ export function Workouts() {
       >
         <div className="form-row">
           <div className="form-group">
-            <label>Sport</label>
-            <select value={form.sport} onChange={e => setForm({ ...form, sport: e.target.value, subtrack: SPORT_SUBTRACKS[e.target.value]?.[0]?.id ?? '' })}>
-              {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+            <label>Discipline</label>
+            <select value={form.discipline} onChange={e => setForm({ ...form, discipline: e.target.value, subtrack: DISCIPLINE_SUBTRACKS[e.target.value]?.[0]?.id ?? '' })}>
+              {DISCIPLINES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
           <div className="form-group">

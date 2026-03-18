@@ -10,7 +10,7 @@ import {
 
 interface Stats { users: number; sessions: number; recent: number; prs: number; prevRecent: number; prevUsers: number; }
 
-const SPORT_COLORS: Record<string, string> = {
+const DISCIPLINE_COLORS: Record<string, string> = {
   crossfit: '#1d4ed8', hyrox: '#166534', athx: '#92400e',
   overhead_shoulder_strength: '#1d4ed8', lower_body_strength: '#2563eb', engine_builder: '#3b82f6',
   sled_carry_strength: '#166534', running_economy: '#15803d', upper_body_push: '#16a34a',
@@ -26,7 +26,7 @@ function pct(a: number, b: number) {
 export function Analytics() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [sessionsPerDay, setSessionsPerDay] = useState<{ date: string; count: number }[]>([]);
-  const [bySubtrack, setBySubtrack] = useState<{ subtrack: string; count: number; sport: string }[]>([]);
+  const [bySubtrack, setBySubtrack] = useState<{ subtrack: string; count: number; discipline: string }[]>([]);
   const [userGrowth, setUserGrowth] = useState<{ date: string; total: number }[]>([]);
   const [prDist, setPrDist] = useState<{ movement: string; count: number }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +45,7 @@ export function Analytics() {
       supabase.from('sessions').select('id', { count: 'exact', head: true }).gte('completed_at', d7),
       supabase.from('sessions').select('id', { count: 'exact', head: true }).gte('completed_at', d14).lt('completed_at', d7),
       supabase.from('personal_records').select('id', { count: 'exact', head: true }),
-      supabase.from('sessions').select('completed_at, subtrack, sport').gte('completed_at', d30),
+      supabase.from('sessions').select('completed_at, subtrack, discipline').gte('completed_at', d30),
       supabase.from('profiles').select('created_at').gte('created_at', d90).order('created_at'),
       supabase.from('personal_records').select('movement'),
     ]);
@@ -67,12 +67,12 @@ export function Analytics() {
     setSessionsPerDay(Object.entries(dayMap).map(([date, count]) => ({ date, count })));
 
     // By subtrack
-    const stMap: Record<string, { count: number; sport: string }> = {};
+    const stMap: Record<string, { count: number; discipline: string }> = {};
     (allSessionsRes.data ?? []).forEach(s => {
-      if (!stMap[s.subtrack]) stMap[s.subtrack] = { count: 0, sport: s.sport };
+      if (!stMap[s.subtrack]) stMap[s.subtrack] = { count: 0, discipline: s.discipline };
       stMap[s.subtrack].count++;
     });
-    setBySubtrack(Object.entries(stMap).map(([subtrack, v]) => ({ subtrack: subtrack.replace(/_/g,' '), count: v.count, sport: v.sport })).sort((a,b) => b.count - a.count));
+    setBySubtrack(Object.entries(stMap).map(([subtrack, v]) => ({ subtrack: subtrack.replace(/_/g,' '), count: v.count, discipline: v.discipline })).sort((a,b) => b.count - a.count));
 
     // User growth
     let cum = 0;

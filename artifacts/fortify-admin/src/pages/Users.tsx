@@ -4,10 +4,10 @@ import { Layout } from '@/components/Layout';
 import { Drawer } from '@/components/Drawer';
 import { SkeletonTable } from '@/components/Skeleton';
 import { useToast } from '@/components/Toast';
-import { SPORT_SUBTRACKS, subtrackLabel, relativeTime, shortDate } from '@/lib/utils';
+import { DISCIPLINE_SUBTRACKS, subtrackLabel, relativeTime, shortDate } from '@/lib/utils';
 import type { Profile, Session, PersonalRecord } from '@/lib/types';
 
-const SPORTS = ['crossfit', 'hyrox', 'athx'];
+const DISCIPLINES = ['crossfit', 'hyrox', 'athx'];
 
 interface UserRow extends Profile {
   session_count?: number;
@@ -19,14 +19,14 @@ export function Users() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [sportFilter, setSportFilter] = useState('all');
+  const [disciplineFilter, setDisciplineFilter] = useState('all');
   const [subtrackFilter, setSubtrackFilter] = useState('all');
   const [selected, setSelected] = useState<UserRow | null>(null);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [prs, setPrs] = useState<PersonalRecord[]>([]);
   const [showAllSessions, setShowAllSessions] = useState(false);
   const [detailLoading, setDetailLoading] = useState(false);
-  const [trackSport, setTrackSport] = useState('');
+  const [trackDiscipline, setTrackDiscipline] = useState('');
   const [trackSubtrack, setTrackSubtrack] = useState('');
   const [updatingTrack, setUpdatingTrack] = useState(false);
   const [updatingAdmin, setUpdatingAdmin] = useState(false);
@@ -50,7 +50,7 @@ export function Users() {
 
   async function openUser(u: UserRow) {
     setSelected(u);
-    setTrackSport(u.sport);
+    setTrackDiscipline(u.discipline);
     setTrackSubtrack(u.subtrack);
     setShowAllSessions(false);
     setDetailLoading(true);
@@ -66,11 +66,11 @@ export function Users() {
   async function updateTrack() {
     if (!selected) return;
     setUpdatingTrack(true);
-    const { error } = await supabase.from('profiles').update({ sport: trackSport, subtrack: trackSubtrack }).eq('id', selected.id);
+    const { error } = await supabase.from('profiles').update({ discipline: trackDiscipline, subtrack: trackSubtrack }).eq('id', selected.id);
     setUpdatingTrack(false);
     if (error) { showToast(error.message, 'error'); return; }
     showToast('Track updated', 'success');
-    setSelected({ ...selected, sport: trackSport as any, subtrack: trackSubtrack });
+    setSelected({ ...selected, discipline: trackDiscipline, subtrack: trackSubtrack });
     fetch();
   }
 
@@ -87,11 +87,11 @@ export function Users() {
 
   const filtered = users
     .filter(u => !search || u.name.toLowerCase().includes(search.toLowerCase()))
-    .filter(u => sportFilter === 'all' || u.sport === sportFilter)
+    .filter(u => disciplineFilter === 'all' || u.discipline === disciplineFilter)
     .filter(u => subtrackFilter === 'all' || u.subtrack === subtrackFilter);
 
-  const subtracks = sportFilter !== 'all' ? (SPORT_SUBTRACKS[sportFilter] ?? []) : [];
-  const trackSubtracks = SPORT_SUBTRACKS[trackSport] ?? [];
+  const subtracks = disciplineFilter !== 'all' ? (DISCIPLINE_SUBTRACKS[disciplineFilter] ?? []) : [];
+  const trackSubtracks = DISCIPLINE_SUBTRACKS[trackDiscipline] ?? [];
 
   const displayedSessions = showAllSessions ? sessions : sessions.slice(0, 20);
 
@@ -102,11 +102,11 @@ export function Users() {
       </div>
       <div className="filter-bar">
         <input placeholder="Search by name…" value={search} onChange={e => setSearch(e.target.value)} style={{ minWidth: 220 }} />
-        <select value={sportFilter} onChange={e => { setSportFilter(e.target.value); setSubtrackFilter('all'); }} style={{ width: 140 }}>
-          <option value="all">All Sports</option>
-          {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+        <select value={disciplineFilter} onChange={e => { setDisciplineFilter(e.target.value); setSubtrackFilter('all'); }} style={{ width: 160 }}>
+          <option value="all">All Disciplines</option>
+          {DISCIPLINES.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
-        {sportFilter !== 'all' && (
+        {disciplineFilter !== 'all' && (
           <select value={subtrackFilter} onChange={e => setSubtrackFilter(e.target.value)} style={{ width: 200 }}>
             <option value="all">All Subtracks</option>
             {subtracks.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -117,13 +117,13 @@ export function Users() {
         {loading ? <div style={{ padding: 16 }}><SkeletonTable cols={7} /></div> : (
           <table className="data-table">
             <thead><tr>
-              <th>Name</th><th>Sport</th><th>Subtrack</th><th>Level</th><th>Sessions</th><th>Last Active</th><th>Joined</th>
+              <th>Name</th><th>Discipline</th><th>Subtrack</th><th>Level</th><th>Sessions</th><th>Last Active</th><th>Joined</th>
             </tr></thead>
             <tbody>
               {filtered.map(u => (
                 <tr key={u.id} style={{ cursor: 'pointer' }} onClick={() => openUser(u)}>
                   <td style={{ fontWeight: 500 }}>{u.name}{u.is_admin && <span className="badge badge-coach" style={{ marginLeft: 8, fontSize: 10 }}>Admin</span>}{u.is_beta && <span className="badge badge-beta" style={{ marginLeft: 6, fontSize: 10 }}>Beta</span>}</td>
-                  <td><span className={`badge badge-${u.sport}`}>{u.sport}</span></td>
+                  <td><span className={`badge badge-${u.discipline}`}>{u.discipline}</span></td>
                   <td style={{ color: '#888', fontSize: 12 }}>{subtrackLabel(u.subtrack)}</td>
                   <td><span className={`badge badge-${u.level}`}>{u.level}</span></td>
                   <td>{u.session_count ?? 0}</td>
@@ -143,7 +143,7 @@ export function Users() {
             <div style={{ background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8, padding: 20, marginBottom: 20 }}>
               <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>{selected.name}</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-                <span className={`badge badge-${selected.sport}`}>{selected.sport}</span>
+                <span className={`badge badge-${selected.discipline}`}>{selected.discipline}</span>
                 <span className="badge badge-beginner" style={{ background: '#2a2a2a' }}>{subtrackLabel(selected.subtrack)}</span>
                 <span className={`badge badge-${selected.level}`}>{selected.level}</span>
                 {selected.is_beta && <span className="badge badge-beta">Beta</span>}
@@ -160,9 +160,9 @@ export function Users() {
             <div className="section-divider">Admin Controls</div>
             <div className="form-row" style={{ marginBottom: 8 }}>
               <div className="form-group">
-                <label>Sport</label>
-                <select value={trackSport} onChange={e => { setTrackSport(e.target.value); setTrackSubtrack(SPORT_SUBTRACKS[e.target.value]?.[0]?.id ?? ''); }}>
-                  {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+                <label>Discipline</label>
+                <select value={trackDiscipline} onChange={e => { setTrackDiscipline(e.target.value); setTrackSubtrack(DISCIPLINE_SUBTRACKS[e.target.value]?.[0]?.id ?? ''); }}>
+                  {DISCIPLINES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div className="form-group">
@@ -188,12 +188,12 @@ export function Users() {
             {detailLoading ? <div style={{ padding: 20, textAlign: 'center', color: '#555' }}>Loading…</div> : <>
               <div className="section-divider" style={{ marginTop: 20 }}>Session History ({sessions.length})</div>
               <table className="data-table">
-                <thead><tr><th>Date</th><th>Sport</th><th>Week/Day</th></tr></thead>
+                <thead><tr><th>Date</th><th>Discipline</th><th>Week/Day</th></tr></thead>
                 <tbody>
                   {displayedSessions.map(s => (
                     <tr key={s.id}>
                       <td style={{ fontSize: 12, color: '#888' }}>{shortDate(s.completed_at)}</td>
-                      <td><span className={`badge badge-${s.sport}`} style={{ fontSize: 10 }}>{s.sport}</span></td>
+                      <td><span className={`badge badge-${s.discipline}`} style={{ fontSize: 10 }}>{s.discipline}</span></td>
                       <td style={{ color: '#888', fontSize: 12 }}>W{s.week_number} D{s.day_number}</td>
                     </tr>
                   ))}

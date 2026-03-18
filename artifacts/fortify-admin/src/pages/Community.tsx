@@ -5,10 +5,10 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { SkeletonTable } from '@/components/Skeleton';
 import { useToast } from '@/components/Toast';
 import { useAuth } from '@/hooks/use-auth';
-import { SPORT_SUBTRACKS } from '@/lib/utils';
+import { DISCIPLINE_SUBTRACKS } from '@/lib/utils';
 import type { ChatMessage, FeedLike } from '@/lib/types';
 
-const SPORTS = ['crossfit', 'hyrox', 'athx'];
+const DISCIPLINES = ['crossfit', 'hyrox', 'athx'];
 
 export function Community() {
   const { user } = useAuth();
@@ -18,13 +18,13 @@ export function Community() {
   const [likes, setLikes] = useState<(FeedLike & { profiles: { name: string } | null })[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const [sportFilter, setSportFilter] = useState('all');
+  const [disciplineFilter, setDisciplineFilter] = useState('all');
   const [subtrackFilter, setSubtrackFilter] = useState('all');
   const [coachOnly, setCoachOnly] = useState(false);
   const [pinnedOnly, setPinnedOnly] = useState(false);
   const [search, setSearch] = useState('');
 
-  const [postSport, setPostSport] = useState('crossfit');
+  const [postDiscipline, setPostDiscipline] = useState('crossfit');
   const [postSubtrack, setPostSubtrack] = useState('overhead_shoulder_strength');
   const [postContent, setPostContent] = useState('');
   const [postPinned, setPostPinned] = useState(false);
@@ -80,11 +80,11 @@ export function Community() {
     fetchMessages();
   }
 
-  const postSubtracks = SPORT_SUBTRACKS[postSport] ?? [];
-  const filterSubtracks = sportFilter !== 'all' ? (SPORT_SUBTRACKS[sportFilter] ?? []) : [];
+  const postSubtracks = DISCIPLINE_SUBTRACKS[postDiscipline] ?? [];
+  const filterSubtracks = disciplineFilter !== 'all' ? (DISCIPLINE_SUBTRACKS[disciplineFilter] ?? []) : [];
 
   const filtered = messages
-    .filter(m => sportFilter === 'all' || m.subtrack?.startsWith(sportFilter.substring(0, 3)) || filterSubtracks.some(s => s.id === m.subtrack))
+    .filter(m => disciplineFilter === 'all' || m.subtrack?.startsWith(disciplineFilter.substring(0, 3)) || filterSubtracks.some(s => s.id === m.subtrack))
     .filter(m => subtrackFilter === 'all' || m.subtrack === subtrackFilter)
     .filter(m => !coachOnly || m.is_coach)
     .filter(m => !pinnedOnly || m.is_pinned)
@@ -104,8 +104,8 @@ export function Community() {
         <div className="coach-panel">
           <div style={{ fontWeight: 600, marginBottom: 16 }}>Post as Coach</div>
           <div style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
-            <select value={postSport} onChange={e => { setPostSport(e.target.value); setPostSubtrack(SPORT_SUBTRACKS[e.target.value]?.[0]?.id ?? ''); }} style={{ width: 140 }}>
-              {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+            <select value={postDiscipline} onChange={e => { setPostDiscipline(e.target.value); setPostSubtrack(DISCIPLINE_SUBTRACKS[e.target.value]?.[0]?.id ?? ''); }} style={{ width: 160 }}>
+              {DISCIPLINES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
             <select value={postSubtrack} onChange={e => setPostSubtrack(e.target.value)} style={{ width: 200 }}>
               {postSubtracks.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -124,11 +124,11 @@ export function Community() {
         </div>
 
         <div className="filter-bar">
-          <select value={sportFilter} onChange={e => { setSportFilter(e.target.value); setSubtrackFilter('all'); }} style={{ width: 140 }}>
-            <option value="all">All Sports</option>
-            {SPORTS.map(s => <option key={s} value={s}>{s}</option>)}
+          <select value={disciplineFilter} onChange={e => { setDisciplineFilter(e.target.value); setSubtrackFilter('all'); }} style={{ width: 160 }}>
+            <option value="all">All Disciplines</option>
+            {DISCIPLINES.map(s => <option key={s} value={s}>{s}</option>)}
           </select>
-          {sportFilter !== 'all' && (
+          {disciplineFilter !== 'all' && (
             <select value={subtrackFilter} onChange={e => setSubtrackFilter(e.target.value)} style={{ width: 200 }}>
               <option value="all">All Subtracks</option>
               {filterSubtracks.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}

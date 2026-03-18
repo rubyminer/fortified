@@ -8,19 +8,17 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { LogOut, User as UserIcon, Calendar, Award, CheckCircle2 } from 'lucide-react';
-import { Sport } from '@/lib/types';
 
-const SPORTS: { id: Sport; label: string; tagline: string }[] = [
-  { id: 'crossfit', label: 'CrossFit', tagline: '4-week cycles · 2–3 days/wk' },
-  { id: 'hyrox',    label: 'Hyrox',    tagline: '5-week cycles · 2–3 days/wk' },
-  { id: 'athx',     label: 'ATHX',     tagline: '6-week cycles · 3–4 days/wk' },
-];
-
-const SPORT_COLORS: Record<Sport, string> = {
+const DISCIPLINE_COLORS: Record<string, string> = {
   crossfit: '#F05A28',
   hyrox: '#3b82f6',
   athx: '#a855f7',
 };
+const DEFAULT_COLOR = '#888888';
+
+function disciplineColor(id: string): string {
+  return DISCIPLINE_COLORS[id] ?? DEFAULT_COLOR;
+}
 
 export default function ProfilePage() {
   const { profile, signOut, refreshProfile } = useAuth();
@@ -31,20 +29,20 @@ export default function ProfilePage() {
   const formatSubtrack = (str: string) =>
     str?.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-  async function handleChangeSport(sport: Sport) {
-    if (!profile || sport === profile.sport || saving) return;
+  async function handleChangeDiscipline(discipline: string) {
+    if (!profile || discipline === profile.discipline || saving) return;
     setSaving(true);
     try {
-      const firstSubtrack = subtracks.find(g => g.sport === sport)?.subtracks[0];
+      const firstSubtrack = subtracks.find(g => g.discipline === discipline)?.subtracks[0];
       const { error } = await supabase
         .from('profiles')
-        .update({ sport, subtrack: firstSubtrack?.id ?? null })
+        .update({ discipline, subtrack: firstSubtrack?.id ?? null })
         .eq('id', profile.id);
       if (error) throw error;
       await refreshProfile();
-      toast.success(`Switched to ${sport.charAt(0).toUpperCase() + sport.slice(1)}`);
+      toast.success(`Switched to ${discipline.charAt(0).toUpperCase() + discipline.slice(1)}`);
     } catch {
-      toast.error('Failed to update sport. Try again.');
+      toast.error('Failed to update discipline. Try again.');
     } finally {
       setSaving(false);
     }
@@ -70,9 +68,9 @@ export default function ProfilePage() {
                 <Badge
                   variant="accent"
                   className="capitalize"
-                  style={{ background: `${SPORT_COLORS[profile?.sport as Sport]}20`, color: SPORT_COLORS[profile?.sport as Sport] }}
+                  style={{ background: `${disciplineColor(profile?.discipline ?? '')}20`, color: disciplineColor(profile?.discipline ?? '') }}
                 >
-                  {profile?.sport}
+                  {profile?.discipline}
                 </Badge>
                 <Badge variant="outline" className="capitalize text-white/70">{profile?.level}</Badge>
               </div>
@@ -82,7 +80,7 @@ export default function ProfilePage() {
           <div className="bg-black/30 p-4 rounded-xl border border-white/5">
             <div className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-1">Current Track</div>
             <div className="text-white font-semibold">{formatSubtrack(profile?.subtrack || '')}</div>
-            <div className="text-xs mt-1 font-bold" style={{ color: SPORT_COLORS[profile?.sport as Sport] }}>
+            <div className="text-xs mt-1 font-bold" style={{ color: disciplineColor(profile?.discipline ?? '') }}>
               {profile?.frequency} Days / Week
             </div>
           </div>
@@ -107,17 +105,17 @@ export default function ProfilePage() {
         </Card>
       </div>
 
-      {/* Sport selector */}
+      {/* Training Discipline selector */}
       <div className="space-y-3">
-        <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground px-1">Your Sport</h2>
+        <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground px-1">Training Discipline</h2>
         <div className="space-y-2">
-          {SPORTS.map(({ id, label, tagline }) => {
-            const isActive = profile?.sport === id;
-            const color = SPORT_COLORS[id];
+          {subtracks.map(({ discipline, label }) => {
+            const isActive = profile?.discipline === discipline;
+            const color = disciplineColor(discipline);
             return (
               <button
-                key={id}
-                onClick={() => handleChangeSport(id)}
+                key={discipline}
+                onClick={() => handleChangeDiscipline(discipline)}
                 disabled={saving || isActive}
                 className="w-full text-left rounded-2xl border transition-all duration-200 p-4 flex items-center justify-between"
                 style={{
@@ -128,7 +126,6 @@ export default function ProfilePage() {
               >
                 <div>
                   <div className="font-display text-lg text-white tracking-wide">{label}</div>
-                  <div className="text-xs text-muted-foreground mt-0.5">{tagline}</div>
                 </div>
                 {isActive && (
                   <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color }} />
@@ -138,7 +135,7 @@ export default function ProfilePage() {
           })}
         </div>
         <p className="text-xs text-muted-foreground px-1">
-          Switching sport resets your active track to the first available track for that sport.
+          Switching discipline resets your active track to the first available track for that discipline.
         </p>
       </div>
 

@@ -26,7 +26,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
         {profile && (
           <div className="text-xs uppercase tracking-widest text-primary font-bold">
-            {profile.sport}
+            {profile.discipline}
           </div>
         )}
       </header>

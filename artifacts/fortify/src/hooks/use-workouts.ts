@@ -18,15 +18,15 @@ export function useWorkout(id: string) {
   });
 }
 
-export function useNextWorkout(sport?: string, subtrack?: string, userId?: string) {
+export function useNextWorkout(discipline?: string, subtrack?: string, userId?: string) {
   return useQuery({
-    queryKey: ['next-workout', sport, subtrack, userId],
+    queryKey: ['next-workout', discipline, subtrack, userId],
     queryFn: async () => {
       // Fetch all available workouts for this track, sorted by week then day
       const { data: allWorkouts, error: workoutsError } = await supabase
         .from('workouts')
-        .select('id, week_number, day_number, sport, subtrack, title, coach_note, warmup, main_work, accessory, created_at')
-        .eq('sport', sport)
+        .select('id, week_number, day_number, discipline, subtrack, title, coach_note, warmup, main_work, accessory, created_at')
+        .eq('discipline', discipline)
         .eq('subtrack', subtrack)
         .order('week_number', { ascending: true })
         .order('day_number', { ascending: true });
@@ -39,7 +39,7 @@ export function useNextWorkout(sport?: string, subtrack?: string, userId?: strin
         .from('sessions')
         .select('week_number, day_number')
         .eq('user_id', userId)
-        .eq('sport', sport)
+        .eq('discipline', discipline)
         .eq('subtrack', subtrack)
         .order('week_number', { ascending: false })
         .order('day_number', { ascending: false })
@@ -72,7 +72,7 @@ export function useNextWorkout(sport?: string, subtrack?: string, userId?: strin
       // Completed all workouts in the track — cycle back to beginning
       return allWorkouts[0] as Workout;
     },
-    enabled: !!sport && !!subtrack && !!userId,
+    enabled: !!discipline && !!subtrack && !!userId,
   });
 }
 
