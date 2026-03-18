@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/admin/"
+title = "Fortify Admin"
+version = "1.0.0"
+id = "artifacts/fortify-admin"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+localPort = 24734
+name = "web"
+paths = ["/admin/"]
+
+[services.development]
+run = "pnpm --filter @workspace/fortify-admin run dev"
+
+[services.env]
+PORT = "24734"
+BASE_PATH = "/admin/"
+
+[services.production]
+build = ["pnpm", "--filter", "@workspace/fortify-admin", "run", "build"]
+publicDir = "artifacts/fortify-admin/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"

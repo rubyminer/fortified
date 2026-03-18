@@ -1,0 +1,430 @@
+# Fortify Admin — Replit Build Prompt
+
+Build a desktop-optimized admin web app called **Fortify Admin** for managing the Fortify strength training app. This is a standalone Vite + React + Tailwind CSS app that connects to the same Supabase project as the main Fortify app. It is designed for desktop use only — no mobile optimization needed.
+
+**Stack:** React + Vite + Tailwind CSS + wouter for routing. Use `@supabase/supabase-js` for all data access. Do not use any Replit-specific services, connectors, databases, or secrets managers.
+
+---
+
+## ENVIRONMENT VARIABLES
+
+Read exclusively from `import.meta.env`. Never hardcode credentials.
+
+Create a `.env.example` file:
+
+```
+VITE_SUPABASE_URL=your-supabase-project-url
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+---
+
+## SCHEMA MIGRATION
+
+Before building the app, generate a migration file `supabase/migrations/002_add_admin.sql` with the following content and include it in the project deliverables:
+
+```sql
+-- Add is_admin column to profiles
+alter table profiles add column if not exists is_admin boolean default false;
+
+-- Drop existing profile policy and replace with split read/update policies
+drop policy if exists "profiles_own" on profiles;
+
+-- Regular users: read and update their own row only
+create policy "profiles_own_read" on profiles
+  for select using (auth.uid() = id);
+
+create policy "profiles_own_update" on profiles
+  for update using (auth.uid() = id);
+
+-- Admins: read all profiles
+create policy "profiles_admin_read" on profiles
+  for select using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and is_admin = true
+    )
+  );
+
+-- Admins: update any profile
+create policy "profiles_admin_update" on profiles
+  for update using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and is_admin = true
+    )
+  );
+
+-- Admins: read all sessions
+drop policy if exists "sessions_own" on sessions;
+
+create policy "sessions_own" on sessions
+  for all using (auth.uid() = user_id);
+
+create policy "sessions_admin_read" on sessions
+  for select using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and is_admin = true
+    )
+  );
+
+-- Admins: read all personal records
+drop policy if exists "prs_own" on personal_records;
+
+create policy "prs_own" on personal_records
+  for all using (auth.uid() = user_id);
+
+create policy "prs_admin_read" on personal_records
+  for select using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and is_admin = true
+    )
+  );
+
+-- Admins: delete and update chat messages (moderation)
+create policy "chat_admin_delete" on chat_messages
+  for delete using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and is_admin = true
+    )
+  );
+
+create policy "chat_admin_update" on chat_messages
+  for update using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and is_admin = true
+    )
+  );
+
+-- Admins: full write access to workouts and movements
+create policy "workouts_admin_write" on workouts
+  for all using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and is_admin = true
+    )
+  );
+
+create policy "movements_admin_write" on movements
+  for all using (
+    exists (
+      select 1 from profiles
+      where id = auth.uid()
+      and is_admin = true
+    )
+  );
+```
+
+Also include a comment in the migration file instructing the developer to run the following in the Supabase SQL editor after applying the migration to grant themselves admin access:
+
+```sql
+update profiles
+set is_admin = true
+where id = (
+  select id from auth.users
+  where email = 'your-email@example.com'
+);
+```
+
+---
+
+## AUTH AND ACCESS CONTROL
+
+On load, check for an active Supabase session via `supabase.auth.getSession()`. If no session exists, show a simple centered login form with email and password fields that calls `supabase.auth.signInWithPassword()`.
+
+After login, query the `profiles` table for the authenticated user's row. Check that `is_admin = true`. If the user is not an admin, sign them out immediately and show a full-screen "Not authorized" message with a sign out button.
+
+If the user is an admin, load the main admin layout.
+
+Add a Sign Out button in the top right of the header that calls `supabase.auth.signOut()` and returns to the login screen.
+
+---
+
+## LAYOUT
+
+Fixed left sidebar (240px wide) with the Fortify Admin logo/wordmark at the top and navigation links for each section. A fixed top header bar showing the current section name and the signed-in user's name. The main content area fills the remaining space with a scrollable content region.
+
+**Theme:**
+- Background: `#0f0f0f`
+- Sidebar and header: `#141414`
+- Card surfaces: `#1a1a1a`
+- Accent color: `#F05A28`
+- Text primary: `#f0f0f0`
+- Text secondary: `#888888`
+- Sidebar active link: accent color left border (3px), slightly lighter background
+
+**Sidebar navigation links:**
+- Dashboard
+- Workouts
+- Movements
+- Users
+- Community
+- Analytics
+
+---
+
+## SECTION 1 — DASHBOARD
+
+Four stat cards in a row at the top:
+- Total users (count from `profiles`)
+- Total sessions completed (count from `sessions`)
+- Sessions in the last 7 days (count from `sessions` where `completed_at > now() - interval '7 days'`)
+- Total PRs logged (count from `personal_records`)
+
+Below the stat cards, two equal columns:
+
+**Left column — Recent Sessions:** Table of the 10 most recent `sessions` rows joined with `profiles` (user name), ordered by `completed_at` descending. Columns: athlete name, sport, subtrack, week, day, completed at (relative time).
+
+**Right column — Recent Sign-Ups:** Table of the 10 most recent `profiles` rows ordered by `created_at` descending. Columns: name, sport, subtrack, level, joined (relative time).
+
+Show skeleton loaders while fetching. All data fetched from Supabase on mount.
+
+---
+
+## SECTION 2 — WORKOUTS
+
+Full-width data table of all rows from the `workouts` table. Columns: ID, sport, subtrack, week, day, title, created at. Sortable by any column (client-side). 
+
+**Filter bar above the table:**
+- Sport dropdown: All, crossfit, hyrox, athx
+- Subtrack dropdown: dynamically populated based on selected sport
+- Search input filtering by title (client-side)
+
+A **New Workout** button in the top right opens the workout form drawer.
+
+Clicking any table row opens the drawer in edit mode pre-filled with that workout's data.
+
+### Workout Form Drawer
+
+A right-side panel (600px wide) that slides in from the right with a dark backdrop overlay. Sticky footer with action buttons. Scrollable content area.
+
+**Top fields:**
+- Sport (dropdown: crossfit, hyrox, athx)
+- Subtrack (dropdown, options change based on sport):
+  - CrossFit: lower_body_strength, overhead_shoulder_strength, pulling_strength, muscular_endurance
+  - Hyrox: sled_carry_strength, running_economy_strength, station_specific_strength, strength_endurance
+  - ATHX: explosive_power, posterior_chain_hinge, upper_body_power, competition_prep
+- Week Number (number input, 1–6)
+- Day Number (number input, 1–4)
+- Title (text input)
+- Coach Note (textarea, 3 rows)
+
+**Warmup section:**
+A list of warmup items (strings). Each item has a text input and a remove (×) button. An "Add Warmup Item" button appends a new empty input. Items show a drag handle for reordering.
+
+**Main Work section:**
+A list of exercise blocks. Each block is a card containing:
+- Movement search: a text input that queries the `movements` table by name (case-insensitive, debounced 300ms) and shows a dropdown of matching results. Selecting a result populates `movement_id`, `name`, and pre-fills `description` from the movement's description field.
+- Sets (number input)
+- Reps (text input — can be "5", "8 each leg", "30 meters")
+- RPE Target (number input, step 0.5, range 5–10)
+- Rest Seconds (number input)
+- Description (textarea, 2 rows — pre-filled from movement but editable)
+- Remove button (trash icon, top right of card)
+
+An "Add Exercise" button appends a new empty exercise block. Blocks show a drag handle for reordering.
+
+**Accessory Work section:** Identical structure to Main Work.
+
+**Drawer footer (sticky):**
+- Cancel button — closes drawer without saving
+- Delete button (red, edit mode only) — deletes the workout row after confirmation dialog
+- Save button — upserts the row into `workouts`, assembling `warmup`, `main_work`, and `accessory` as JSONB arrays from the form state. On success shows a toast "Workout saved" and refreshes the table.
+
+Each exercise object saved to JSONB must have this shape:
+```json
+{
+  "movement_id": "bulgarian_split_squat",
+  "name": "Bulgarian Split Squat",
+  "sets": 4,
+  "reps": "8 each leg",
+  "rpe_target": 7.5,
+  "rest_seconds": 150,
+  "description": "Rear foot elevated on bench..."
+}
+```
+
+---
+
+## SECTION 3 — MOVEMENTS
+
+Full-width data table of all rows from the `movements` table. Columns: name, category, subcategory, difficulty, equipment (comma-joined), primary muscles (comma-joined), active status.
+
+**Filter bar:**
+- Category filter chips: all, squat, hinge, press_vertical, press_horizontal, pull_vertical, pull_horizontal, carry, olympic, explosive, core, accessory
+- Sport tag filter chips: all, crossfit, hyrox, athx
+- Active toggle: show active only (default on) or show all
+- Search input filtering by name (client-side)
+
+**New Movement** button opens the movement form drawer. Clicking any row opens it in edit mode.
+
+### Movement Form Drawer
+
+Same drawer pattern (600px, slides from right, sticky footer).
+
+**Fields:**
+- ID (text input — slug format e.g. `bulgarian_split_squat`. Editable on create, read-only on edit to prevent breaking workout JSONB references)
+- Name (text input)
+- Category (dropdown: squat, hinge, press_vertical, press_horizontal, pull_vertical, pull_horizontal, carry, olympic, explosive, core, accessory)
+- Subcategory (text input)
+- Difficulty (dropdown: beginner, intermediate, advanced)
+- Tags (tag input — type and press Enter or comma to add, click to remove. Stored as text array.)
+- YouTube URL (text input — on paste or blur, auto-extract the video ID and populate the YouTube Embed ID field. Handle both `youtube.com/watch?v=ID` and `youtu.be/ID` formats.)
+- YouTube Embed ID (text input — auto-populated but manually editable)
+- YouTube preview: if a valid embed ID exists, show a small YouTube iframe preview (320×180) below the embed ID field
+- Description (textarea, 4 rows)
+- Cue Points (tag-style input — each cue is a string. Press Enter to add, click to remove.)
+- Equipment (tag-style input)
+- Primary Muscles (tag-style input)
+- Secondary Muscles (tag-style input)
+- Active (toggle switch)
+
+**Drawer footer:**
+- Cancel button
+- Deactivate / Activate button — sets `is_active = false` or `true` without deleting
+- Save button — upserts the row. On success shows toast "Movement saved" and refreshes the table.
+
+---
+
+## SECTION 4 — USERS
+
+Full-width data table of all `profiles` rows. For each profile, also fetch session count (from `sessions`) and most recent `completed_at` as "last active". Columns: name, sport, subtrack, level, frequency, sessions completed, last active, beta member, joined date.
+
+Search input filters by name (client-side). Sport and subtrack dropdowns filter the table.
+
+Clicking any row opens a user detail drawer.
+
+### User Detail Drawer
+
+**Profile summary card at top:**
+Name, sport badge, subtrack badge, level, frequency, beta badge, joined date, sessions completed count, PRs logged count.
+
+**Admin controls:**
+- Sport dropdown and subtrack dropdown with an "Update Track" button. On click, updates `profiles` row for that user. Show an inline warning: "This will not reset their session history. Their next workout will be calculated from the new track."
+- Is Admin toggle (checkbox) — updates `profiles.is_admin`.
+
+**Session history:**
+Table of all `sessions` for this user ordered by `completed_at` descending. Columns: date, sport, subtrack, week, day. Show 20 rows with a "Show all" toggle that loads the rest.
+
+**PR history:**
+Table of all `personal_records` for this user ordered by `achieved_at` descending. Columns: movement, weight (lbs), date, notes.
+
+---
+
+## SECTION 5 — COMMUNITY
+
+Two sub-tabs at the top: **Chat Messages** and **Feed Likes**.
+
+### Chat Messages tab
+
+**Post as Coach panel** (above the table — always visible):
+- Sport dropdown → Subtrack dropdown (cascading)
+- Message textarea
+- Pin this message toggle
+- Post Message button — inserts into `chat_messages` with `is_coach = true`, `author_name = "Coach"`, and the current admin's user ID. Shows toast on success and refreshes the table.
+
+**Filter bar:**
+- Sport dropdown → Subtrack dropdown
+- Coach only toggle (filters to `is_coach = true`)
+- Pinned only toggle (filters to `is_pinned = true`)
+- Search input (filters by content, client-side)
+
+**Messages table.** Columns: subtrack, author, message content (truncated to 80 chars), coach badge, pinned badge, created at.
+
+**Row actions (icon buttons on each row):**
+- Pin / Unpin — updates `is_pinned`
+- Delete — deletes the row after a confirmation dialog
+
+### Feed Likes tab
+
+Table of `feed_likes` joined with `profiles`. Columns: athlete name, feed item ID, liked at. Read-only, informational only.
+
+---
+
+## SECTION 6 — ANALYTICS
+
+All charts built with recharts.
+
+**Four stat cards** (same as Dashboard) with sparkline trend indicators — compare last 7 days vs prior 7 days, show percentage change with a green up arrow or red down arrow indicator.
+
+**Sessions per day** — recharts AreaChart, sessions completed per day for the last 30 days. X axis: date. Y axis: count. Accent color fill at low opacity.
+
+**Sessions by subtrack** — recharts BarChart, total sessions grouped by subtrack. Color bars by sport: crossfit = `#1d4ed8`, hyrox = `#166534`, athx = `#92400e`.
+
+**User growth** — recharts LineChart, cumulative user signups over the last 90 days. X axis: date. Y axis: cumulative count.
+
+**PR distribution by movement** — recharts BarChart (horizontal, `layout="vertical"`), top 10 movements by total PR entry count across all users.
+
+All analytics data fetched on mount. Show skeleton loaders. A **Refresh** button in the section header re-fetches all queries.
+
+---
+
+## SHARED COMPONENTS
+
+Build the following reusable components used throughout the app:
+
+**Toast notifications** — fixed bottom-right. `showToast(message, type)` where type is `success`, `error`, or `info`. Auto-dismisses after 3 seconds. Success: green. Error: red. Info: accent color.
+
+**Confirmation dialog** — centered modal overlay before any destructive action (delete workout, delete message, deactivate movement). Shows title, message, Cancel button, and red Confirm button.
+
+**Drawer** — right-side panel, 600px wide. Slides in from the right. Dark backdrop overlay at 60% opacity. Header with title and close button. Scrollable content area. Sticky footer.
+
+**Data table** — consistent table with sortable column headers (click to toggle asc/desc), `#222` row hover, `#2a2a2a` header row, "No results" empty state.
+
+**Skeleton loader** — pulsing gray placeholder matching the shape of the content being loaded. Used in all tables and stat cards.
+
+**Tag input** — displays existing values as removable chips. Type and press Enter or comma to add. Click a chip to remove it.
+
+**Movement search input** — debounced (300ms) text input querying `movements` by name. Shows a dropdown of results, each with movement name and category badge. Fires `onSelect(movement)` on selection.
+
+---
+
+## DESIGN DETAILS
+
+**Colors:**
+- Tables: `#1a1a1a` background, `#222` on hover, `#2a2a2a` header rows
+- Primary buttons: `#F05A28` background, white text
+- Secondary buttons: transparent background, `#333` border, `#f0f0f0` text
+- Destructive buttons: red background, white text
+- Form inputs: `#222` background, `#444` border, `#f0f0f0` text, `#F05A28` focus ring
+
+**Sport badges:**
+- crossfit: `#1d4ed8` background, `#93c5fd` text
+- hyrox: `#166534` background, `#86efac` text
+- athx: `#92400e` background, `#fcd34d` text
+
+**Other badges:**
+- Difficulty beginner: gray. intermediate: yellow. advanced: red.
+- Coach: `#F05A28` background, white text.
+- Beta: gray background, secondary text.
+- Active / Inactive: green / red dot indicator.
+
+**Typography:**
+- System font stack
+- Section headings: 20px, weight 600
+- Table column headers: 12px, uppercase, weight 500, letter-spacing 0.05em
+- Body text: 14px
+- Sidebar nav links: 14px, weight 500
+
+---
+
+## DELIVERABLES
+
+- [ ] Full React + Vite + Tailwind admin app
+- [ ] `supabase/migrations/002_add_admin.sql` — `is_admin` column and all updated RLS policies
+- [ ] `.env.example` with Supabase variable names
+- [ ] All six sections implemented with real Supabase queries — no mock data
+- [ ] All shared components built and used consistently throughout
+- [ ] No Replit-specific services, connectors, or secrets managers
+- [ ] No hardcoded Supabase credentials

@@ -88,6 +88,25 @@ Fortify — mobile-first PWA for functional athletes. Pure frontend app using Su
 
 Key dependencies: `@supabase/supabase-js`, `wouter`, `@tanstack/react-query`, `framer-motion`, `lucide-react`, `react-hook-form`, `zod`, `date-fns`
 
+### `artifacts/fortify-admin` (`@workspace/fortify-admin`)
+
+Fortify Admin — desktop-optimized admin panel for managing the Fortify app. Pure frontend using Supabase for all data.
+
+Preview path: `/admin/`
+
+Key features: Dashboard stats, Workout CRUD with exercise builder, Movement library management, User management with track override, Community moderation (chat posts, pin/delete), Analytics charts with Recharts.
+
+Key dependencies: `@supabase/supabase-js`, `wouter`, `recharts`, `date-fns`
+
+Setup:
+1. Run `supabase/migrations/002_add_admin.sql` in Supabase SQL editor to add `is_admin` column and admin RLS policies
+2. Grant admin: `update profiles set is_admin = true where id = (select id from auth.users where email = 'your-email@example.com');`
+3. Create `artifacts/fortify-admin/.env` from `.env.example`:
+   ```
+   VITE_SUPABASE_URL=https://your-project-id.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-key
+   ```
+
 ### `artifacts/api-server` (`@workspace/api-server`)
 
 Express 5 API server (not used by Fortify — included as part of monorepo template).

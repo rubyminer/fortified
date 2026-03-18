@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f0f0f;
+  --surface: #141414;
+  --card: #1a1a1a;
+  --card-hover: #222222;
+  --border: #2a2a2a;
+  --border-strong: #3a3a3a;
+  --accent: #F05A28;
+  --accent-hover: #d94e21;
+  --text: #f0f0f0;
+  --muted: #888888;
+  --input-bg: #222222;
+  --input-border: #444444;
+  --destructive: #ef4444;
+  --green: #22c55e;
+  --table-header: #2a2a2a;
+  --table-hover: #222222;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--surface); }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+/* Inputs */
+input, textarea, select {
+  background: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 14px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(240,90,40,0.15);
+}
+input::placeholder, textarea::placeholder { color: var(--muted); }
+select option { background: var(--card); color: var(--text); }
+textarea { resize: vertical; font-family: inherit; line-height: 1.5; }
+
+/* Buttons */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; white-space: nowrap; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--accent); color: white; }
+.btn-primary:hover:not(:disabled) { background: var(--accent-hover); }
+.btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border-strong); }
+.btn-secondary:hover:not(:disabled) { background: var(--card-hover); }
+.btn-destructive { background: var(--destructive); color: white; }
+.btn-destructive:hover:not(:disabled) { background: #dc2626; }
+.btn-ghost { background: transparent; color: var(--muted); padding: 6px 8px; }
+.btn-ghost:hover { color: var(--text); background: var(--card-hover); }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn-icon { padding: 6px; }
+
+/* Labels */
+label { font-size: 12px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 6px; }
+
+/* Badges */
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.badge-crossfit { background: #1d4ed8; color: #93c5fd; }
+.badge-hyrox { background: #166534; color: #86efac; }
+.badge-athx { background: #92400e; color: #fcd34d; }
+.badge-coach { background: var(--accent); color: white; }
+.badge-beta { background: #333; color: var(--muted); }
+.badge-beginner { background: #333; color: var(--muted); }
+.badge-intermediate { background: #713f12; color: #fef08a; }
+.badge-advanced { background: #7f1d1d; color: #fca5a5; }
+.badge-active { background: #14532d; color: #86efac; }
+.badge-inactive { background: #450a0a; color: #fca5a5; }
+.badge-pinned { background: #1e3a5f; color: #93c5fd; }
+
+/* Table */
+.data-table { width: 100%; border-collapse: collapse; }
+.data-table th { background: var(--table-header); color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 12px; text-align: left; white-space: nowrap; border-bottom: 1px solid var(--border); }
+.data-table th.sortable { cursor: pointer; user-select: none; }
+.data-table th.sortable:hover { color: var(--text); }
+.data-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: var(--table-hover); }
+.data-table .truncate-cell { max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Skeleton */
+@keyframes shimmer { 0% { opacity: 0.4; } 50% { opacity: 0.8; } 100% { opacity: 0.4; } }
+.skeleton { background: var(--border); border-radius: 4px; animation: shimmer 1.5s ease-in-out infinite; }
+
+/* Stat cards */
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; }
+.stat-card .stat-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 500; margin-bottom: 8px; }
+.stat-card .stat-value { font-size: 32px; font-weight: 700; color: var(--text); line-height: 1; }
+.stat-card .stat-change { font-size: 12px; margin-top: 6px; font-weight: 500; }
+
+/* Section */
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.section-title { font-size: 20px; font-weight: 600; }
+
+/* Filter bar */
+.filter-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 8px; }
+.filter-bar input { flex: 1; min-width: 180px; }
+
+/* Form group */
+.form-group { margin-bottom: 16px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Tag input */
+.tag-input-container { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 8px; background: var(--input-bg); border: 1px solid var(--input-border); border-radius: 6px; cursor: text; min-height: 40px; align-items: center; }
+.tag-input-container:focus-within { border-color: var(--accent); }
+.tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: var(--border); color: var(--text); border-radius: 4px; font-size: 12px; }
+.tag button { background: none; border: none; color: var(--muted); cursor: pointer; padding: 0; font-size: 14px; line-height: 1; display: flex; align-items: center; }
+.tag button:hover { color: var(--text); }
+.tag-input { background: none; border: none; outline: none; flex: 1; min-width: 80px; padding: 2px 4px; color: var(--text); font-size: 13px; box-shadow: none; width: auto; }
+
+/* Exercise card */
+.exercise-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 10px; }
+
+/* Divider */
+.section-divider { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 20px 0 12px; display: flex; align-items: center; gap: 10px; }
+.section-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* Sub-tabs */
+.sub-tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--card); padding: 4px; border-radius: 8px; border: 1px solid var(--border); width: fit-content; }
+.sub-tab { padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--muted); border: none; background: none; transition: all 0.15s; }
+.sub-tab.active { background: var(--accent); color: white; }
+.sub-tab:hover:not(.active) { color: var(--text); background: var(--card-hover); }
+
+/* Toggle */
+.toggle { position: relative; width: 36px; height: 20px; cursor: pointer; }
+.toggle input { opacity: 0; width: 0; height: 0; }
+.toggle-track { position: absolute; inset: 0; background: var(--border-strong); border-radius: 20px; transition: background 0.2s; }
+.toggle input:checked + .toggle-track { background: var(--accent); }
+.toggle-thumb { position: absolute; height: 14px; width: 14px; background: white; border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s; }
+.toggle input:checked ~ .toggle-thumb { transform: translateX(16px); }
+
+/* Coach post panel */
+.coach-panel { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
