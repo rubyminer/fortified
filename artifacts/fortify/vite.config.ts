@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { VitePWA } from "vite-plugin-pwa";
 
 const rawPort = process.env.PORT;
 
@@ -32,6 +33,38 @@ export default defineConfig({
     react(),
     tailwindcss(),
     runtimeErrorOverlay(),
+    VitePWA({
+      registerType: "autoUpdate",
+      strategies: "injectManifest",
+      srcDir: "public",
+      filename: "sw.js",
+      injectManifest: {
+        swSrc: "public/sw.js",
+        swDest: "dist/public/sw.js",
+        injectionPoint: undefined,
+      },
+      manifest: {
+        name: "Fortify — Functional Strength",
+        short_name: "Fortify",
+        description: "Supplemental strength training for CrossFit, Hyrox, and ATHX athletes",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#0a0a0a",
+        theme_color: "#ff5500",
+        orientation: "portrait-primary",
+        categories: ["health", "fitness", "sports"],
+        icons: [
+          { src: "/icons/icon-72.png", sizes: "72x72", type: "image/png" },
+          { src: "/icons/icon-96.png", sizes: "96x96", type: "image/png" },
+          { src: "/icons/icon-128.png", sizes: "128x128", type: "image/png" },
+          { src: "/icons/icon-144.png", sizes: "144x144", type: "image/png" },
+          { src: "/icons/icon-152.png", sizes: "152x152", type: "image/png" },
+          { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+          { src: "/icons/icon-384.png", sizes: "384x384", type: "image/png" },
+          { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+        ],
+      },
+    }),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [

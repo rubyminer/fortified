@@ -6,18 +6,28 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Sport } from '@/lib/types';
+
+const SPORTS: { id: Sport | 'all'; label: string }[] = [
+  { id: 'all', label: 'All Sports' },
+  { id: 'crossfit', label: 'CrossFit' },
+  { id: 'hyrox', label: 'Hyrox' },
+  { id: 'athx', label: 'ATHX' },
+];
+
+const CATEGORIES = ['all', 'squat', 'hinge', 'press_vertical', 'press_horizontal', 'pull_vertical', 'pull_horizontal', 'carry', 'olympic', 'explosive', 'core', 'accessory'];
 
 export default function MovementsPage() {
   const { data: movements, isLoading } = useMovements();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string>('all');
-
-  const categories = ['all', 'squat', 'hinge', 'press_vertical', 'press_horizontal', 'pull_vertical', 'pull_horizontal', 'carry', 'olympic', 'explosive', 'core'];
+  const [sport, setSport] = useState<Sport | 'all'>('all');
 
   const filtered = movements?.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = category === 'all' || m.category === category;
-    return matchesSearch && matchesCategory;
+    const matchesSport = sport === 'all' || (m.tags && m.tags.includes(sport));
+    return matchesSearch && matchesCategory && matchesSport;
   }) || [];
 
   return (
@@ -37,20 +47,38 @@ export default function MovementsPage() {
         />
       </div>
 
-      <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-        {categories.map(cat => (
-          <button
-            key={cat}
-            onClick={() => setCategory(cat)}
-            className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
-              category === cat 
-                ? 'bg-white text-black' 
-                : 'bg-card text-muted-foreground border border-white/5'
-            }`}
-          >
-            {cat.replace('_', ' ')}
-          </button>
-        ))}
+      <div className="space-y-3">
+        <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+          {SPORTS.map(s => (
+            <button
+              key={s.id}
+              onClick={() => setSport(s.id)}
+              className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
+                sport === s.id 
+                  ? 'bg-primary text-white' 
+                  : 'bg-card text-muted-foreground border border-white/5'
+              }`}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+          {CATEGORIES.map(cat => (
+            <button
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={`whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
+                category === cat 
+                  ? 'bg-white text-black' 
+                  : 'bg-card text-muted-foreground border border-white/5'
+              }`}
+            >
+              {cat.replace(/_/g, ' ')}
+            </button>
+          ))}
+        </div>
       </div>
 
       {isLoading ? (
@@ -62,21 +90,21 @@ export default function MovementsPage() {
               key={movement.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
+              transition={{ delay: idx * 0.03 }}
             >
               <Link href={`/movements/${movement.id}`}>
                 <Card className="hover:border-primary/50 transition-colors cursor-pointer group bg-card/60">
                   <CardContent className="p-4 flex items-center justify-between">
                     <div>
                       <h3 className="font-display text-xl text-white group-hover:text-primary transition-colors">{movement.name}</h3>
-                      <div className="flex gap-2 mt-2">
-                        <Badge variant="outline" className="bg-background text-[10px]">{movement.category}</Badge>
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        <Badge variant="outline" className="bg-background text-[10px]">{movement.category.replace(/_/g, ' ')}</Badge>
                         {movement.difficulty && (
                           <Badge variant="secondary" className="text-[10px] capitalize">{movement.difficulty}</Badge>
                         )}
                       </div>
                     </div>
-                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0 ml-3">
                       <Play className="w-4 h-4 text-white ml-1 group-hover:text-primary" />
                     </div>
                   </CardContent>
@@ -86,7 +114,7 @@ export default function MovementsPage() {
           ))}
           {filtered.length === 0 && (
             <div className="col-span-2 text-center py-10 text-muted-foreground bg-card/30 rounded-xl border border-dashed border-white/10">
-              No movements found matching your criteria.
+              No movements match your filters.
             </div>
           )}
         </div>

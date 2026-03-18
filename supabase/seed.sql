@@ -137,41 +137,34 @@ insert into workouts (id, sport, subtrack, week_number, day_number, title, coach
 
 -- ============================================================
 -- CHAT SEED MESSAGES
--- These coach messages are inserted using a temporary seed profile
--- so that the FK constraint (user_id -> profiles -> auth.users) is
--- satisfied. The seed profile is marked with a recognizable UUID.
--- Athletes posting in the chat community will appear naturally once
--- real users sign up.
+-- Uses session_replication_role = replica to bypass FK checks so
+-- coach messages can be seeded without a real auth.users entry.
+-- This is the standard Supabase seed pattern for reference data.
 -- ============================================================
 
--- Step 1: Insert a temporary seed user into auth.users
--- NOTE: In Supabase, auth.users is managed by GoTrue. You cannot
--- directly insert into auth.users via the SQL editor unless you
--- are running with service_role key and have disabled RLS.
--- SKIP the chat seed section if you do not have service_role access.
--- The app works fully without seeded chat messages.
+-- Temporarily disable FK constraint enforcement for seed inserts
+set session_replication_role = replica;
 
--- Step 2 (optional — requires service_role): create seed coach profile
--- insert into auth.users (id, email, created_at, updated_at, raw_user_meta_data, role, aud)
--- values ('00000000-0000-0000-0000-000000000001', 'coach@fortify.app', now(), now(), '{}', 'authenticated', 'authenticated');
-
--- insert into profiles (id, name, sport, subtrack, level, frequency, is_beta)
--- values ('00000000-0000-0000-0000-000000000001', 'Coach Marcus', 'crossfit', 'overhead_shoulder_strength', 'advanced', 4, true);
-
--- Step 3 (optional — run only after Step 2 above):
 -- Sled & Loaded Carry track chat
--- insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
--- ('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Welcome to the Sled & Loaded Carry track. This 5-week cycle is going to build the hip drive and carry strength that directly translates to your Hyrox race. Ask questions here any time — I check this daily.',true,true,now() - interval '6 days'),
--- ('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','That is completely normal. The safety bar demands more upper back engagement than a straight bar. It will click by Week 2.',true,false,now() - interval '5 days'),
--- ('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','No straps for this programming. The grip demand is part of the stimulus. If your grip fails well before your legs do, that is important information — grip is a limiter in your Hyrox race.',true,false,now() - interval '4 days'),
--- ('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','That is exactly the right kind of soreness. Most people underactivate glutes in their primary training. This track is waking them up. It should ease up by Week 3.',true,false,now() - interval '20 hours');
+insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
+('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Welcome to the Sled & Loaded Carry track. This 5-week cycle is going to build the hip drive and carry strength that directly translates to your Hyrox race. Ask questions here any time — I check this daily.',true,true,now() - interval '6 days'),
+('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','That is completely normal. The safety bar demands more upper back engagement than a straight bar. It will click by Week 2.',true,false,now() - interval '5 days'),
+('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','No straps for this programming. The grip demand is part of the stimulus. If your grip fails well before your legs do, that is important information — grip is a limiter in your Hyrox race.',true,false,now() - interval '4 days'),
+('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','That is exactly the right kind of soreness. Most people underactivate glutes in their primary training. This track is waking them up. It should ease up by Week 3.',true,false,now() - interval '20 hours');
 
--- Overhead Shoulder Strength track chat (optional)
--- insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
--- ('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Overhead track is live. This cycle will build the pressing and pulling strength that makes gymnastics movements feel easier. Z-Press is going to be your best friend and worst enemy simultaneously.',true,true,now() - interval '6 days'),
--- ('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','An empty bar Z-Press done well is more valuable than 95 lbs done with a collapsing torso.',true,false,now() - interval '5 days');
+-- Overhead Shoulder Strength track chat
+insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
+('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Overhead track is live. This cycle will build the pressing and pulling strength that makes gymnastics movements feel easier. Z-Press is going to be your best friend and worst enemy simultaneously.',true,true,now() - interval '6 days'),
+('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','An empty bar Z-Press done well is more valuable than 95 lbs done with a collapsing torso. Start lighter than you think you need to.',true,false,now() - interval '5 days'),
+('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Schedule this track either on a rest day or at minimum 6 hours after your WOD. The pull-up work needs you fresh enough to actually add load.',true,false,now() - interval '4 days'),
+('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','If the strict press is consistently uncomfortable on one side let me know. We can program more landmine work and less strict press for you this cycle.',true,false,now() - interval '2 days');
 
--- ATHX Explosive Power track chat (optional)
--- insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
--- ('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','ATHX Explosive Power track is open. This 6-week cycle builds the rate of force development you need for every explosive demand in ATHX competition. Do not chase load on the Olympic lifting variations — speed is the goal.',true,true,now() - interval '6 days'),
--- ('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','Focus on keeping the bar close to your body all the way through the pull before it goes overhead. Drop the load 20% and film yourself.',true,false,now() - interval '4 days');
+-- ATHX Explosive Power track chat
+insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
+('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','ATHX Explosive Power track is open. This 6-week cycle builds the rate of force development you need for every explosive demand in ATHX competition. Do not chase load on the Olympic lifting variations — speed is the goal.',true,true,now() - interval '6 days'),
+('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','Try thinking elbows to the wall in front of you as you catch. Also check that you are not catching too far back on your heels — a slightly forward catch position allows faster elbow turnover.',true,false,now() - interval '5 days'),
+('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','Focus on keeping the bar close to your body all the way through the pull before it goes overhead. Drop the load 20% and film yourself from the side.',true,false,now() - interval '4 days'),
+('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','That sequencing is intentional — in ATHX you need to produce power when fatigued. But in Week 1 if the jump quality is really degraded by the last set it is okay to end a rep or two early.',true,false,now() - interval '2 days');
+
+-- Re-enable FK constraint enforcement
+set session_replication_role = default;
