@@ -7,8 +7,8 @@ create table profiles (
   name text not null,
   sport text not null,
   subtrack text not null,
-  level text not null,
-  frequency int not null,
+  level text not null default 'intermediate',
+  frequency int not null default 3,
   is_beta boolean default true,
   created_at timestamptz default now()
 );
