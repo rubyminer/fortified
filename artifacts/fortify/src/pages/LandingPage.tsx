@@ -7,13 +7,10 @@ import mockup6 from '@assets/landing_page_6_1773851354670.png';
 import mockup7 from '@assets/landing_page_7_1773851354670.png';
 import mockup8 from '@assets/landing_page_8_1773851354670.png';
 
-function PhoneFrame({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
+function MockupImage({ src, alt, className = '' }: { src: string; alt: string; className?: string }) {
   return (
-    <div className={`relative mx-auto ${className}`} style={{ width: 260, height: 530 }}>
-      <div className="absolute inset-0 rounded-[2.5rem] border-2 border-white/10 bg-black shadow-2xl overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-5 bg-black rounded-b-xl z-10" />
-        <img src={src} alt={alt} className="w-full h-full object-cover object-top" />
-      </div>
+    <div className={`rounded-2xl overflow-hidden border border-white/5 shadow-2xl shadow-black/60 ${className}`}>
+      <img src={src} alt={alt} className="w-full h-auto block" />
     </div>
   );
 }
@@ -320,80 +317,63 @@ export default function LandingPage() {
       {/* ── APP FEATURES ── */}
       <section id="features" className="py-24 px-6 md:px-12 max-w-6xl mx-auto">
         <p className="text-center text-xs uppercase tracking-[0.3em] text-primary mb-4">App Features</p>
-        <h2 className="font-display text-4xl md:text-6xl text-center mb-24">
+        <h2 className="font-display text-4xl md:text-6xl text-center mb-20">
           EVERYTHING YOU NEED<br />TO GET STRONGER
         </h2>
 
-        {/* Feature Row 1: Today's Workout */}
-        <div className="grid md:grid-cols-2 gap-16 items-center mb-32">
+        <div className="flex flex-col gap-24">
+          {/* Feature 1: Today's Workout */}
           <div>
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" />
-              </svg>
-            </div>
-            <h3 className="font-display text-3xl md:text-4xl mb-4">TODAY'S WORKOUT</h3>
-            <p className="text-white/50 leading-relaxed">
-              Coach-written sessions delivered daily. Every exercise has a description, cue points, and a linked video.
-            </p>
-          </div>
-          <PhoneFrame src={mockup6} alt="Today's workout view" />
-        </div>
-
-        {/* Feature Row 2: Set Logging */}
-        <div className="grid md:grid-cols-2 gap-16 items-center mb-32">
-          <PhoneFrame src={mockup7} alt="Set logging view" className="order-2 md:order-1" />
-          <div className="order-1 md:order-2">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
-            <h3 className="font-display text-3xl md:text-4xl mb-4">SET LOGGING + REST TIMER</h3>
-            <p className="text-white/50 leading-relaxed">
-              Log weight, reps, and RPE inline. Built-in rest timer so you stay on pace.
-            </p>
-          </div>
-        </div>
-
-        {/* Feature Row 3: PR Tracker */}
-        <div className="grid md:grid-cols-2 gap-16 items-center mb-32">
-          <div>
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
-              </svg>
-            </div>
-            <h3 className="font-display text-3xl md:text-4xl mb-4">PR TRACKER</h3>
-            <p className="text-white/50 leading-relaxed">
-              Every movement tracked over time. The app surfaces new PRs automatically as you log.
-            </p>
-          </div>
-          <PhoneFrame src={mockup8} alt="PR tracker and profile view" />
-        </div>
-
-        {/* Feature Row 4: Community */}
-        <div className="grid md:grid-cols-2 gap-16 items-center">
-          <div className="bg-[#111] rounded-2xl p-10 border border-white/5 flex items-center justify-center order-2 md:order-1" style={{ height: 260 }}>
-            <div className="text-center">
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mx-auto mb-4">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            <div className="flex items-start gap-4 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" />
                 </svg>
               </div>
-              <p className="text-white/30 text-sm">Live community chat</p>
+              <div>
+                <h3 className="font-display text-3xl md:text-4xl mb-2">TODAY'S WORKOUT</h3>
+                <p className="text-white/50 leading-relaxed max-w-lg">
+                  Coach-written sessions delivered daily. Every exercise has a description, cue points, and a linked video.
+                </p>
+              </div>
             </div>
+            <MockupImage src={mockup6} alt="Today's workout view" />
           </div>
-          <div className="order-1 md:order-2">
-            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-6">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
+
+          {/* Feature 2: Set Logging */}
+          <div>
+            <div className="flex items-start gap-4 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-display text-3xl md:text-4xl mb-2">SET LOGGING + REST TIMER</h3>
+                <p className="text-white/50 leading-relaxed max-w-lg">
+                  Log weight, reps, and RPE inline. Built-in rest timer so you stay on pace.
+                </p>
+              </div>
             </div>
-            <h3 className="font-display text-3xl md:text-4xl mb-4">COMMUNITY & COACH CHAT</h3>
-            <p className="text-white/50 leading-relaxed">
-              Ask questions, share progress, and connect with athletes on the same track. Coach responses in the feed.
-            </p>
+            <MockupImage src={mockup7} alt="Set logging and rest timer view" />
+          </div>
+
+          {/* Feature 3: PR Tracker + Community */}
+          <div>
+            <div className="flex items-start gap-4 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-display text-3xl md:text-4xl mb-2">PR TRACKER & COMMUNITY</h3>
+                <p className="text-white/50 leading-relaxed max-w-lg">
+                  Every movement tracked over time. PRs surface automatically as you log. Ask questions and share progress with athletes on the same track.
+                </p>
+              </div>
+            </div>
+            <MockupImage src={mockup8} alt="PR tracker and community view" />
           </div>
         </div>
       </section>
