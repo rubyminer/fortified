@@ -39,7 +39,7 @@ export function OnboardingRoute({ children }: { children: React.ReactNode }) {
       if (!user) {
         setLocation('/auth');
       } else if (profile) {
-        setLocation('/');
+        setLocation('/feed');
       }
     }
   }, [user, profile, isLoading, setLocation]);

@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute, OnboardingRoute } from "@/components/ProtectedRoute";
 
+import LandingPage from "@/pages/LandingPage";
 import AuthPage from "@/pages/AuthPage";
 import OnboardingPage from "@/pages/OnboardingPage";
 import FeedPage from "@/pages/FeedPage";
@@ -22,6 +23,7 @@ const queryClient = new QueryClient();
 function Router() {
   return (
     <Switch>
+      <Route path="/" component={LandingPage} />
       <Route path="/auth" component={AuthPage} />
       <Route path="/onboarding">
         {() => (
@@ -32,7 +34,7 @@ function Router() {
       </Route>
       
       {/* Protected App Routes */}
-      <Route path="/">
+      <Route path="/feed">
         {() => (
           <ProtectedRoute>
             <FeedPage />

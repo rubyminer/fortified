@@ -34,7 +34,7 @@ export default function AuthPage() {
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        setLocation('/');
+        setLocation('/feed');
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Authentication failed';

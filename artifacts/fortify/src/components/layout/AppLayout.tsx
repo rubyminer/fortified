@@ -8,7 +8,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const { profile } = useAuth();
 
   const navItems = [
-    { icon: Home, label: 'Feed', path: '/' },
+    { icon: Home, label: 'Feed', path: '/feed' },
     { icon: Dumbbell, label: 'Library', path: '/movements' },
     { icon: Trophy, label: 'PRs', path: '/prs' },
     { icon: MessageCircle, label: 'Chat', path: '/chat' },
@@ -38,7 +38,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       <nav className="fixed bottom-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-2xl border-t border-white/5 pb-safe">
         <div className="flex justify-around items-center h-16 max-w-lg mx-auto px-2">
           {navItems.map((item) => {
-            const isActive = location === item.path || (item.path !== '/' && location.startsWith(item.path));
+            const isActive = location === item.path || (item.path !== '/feed' && location.startsWith(item.path));
             return (
               <Link key={item.path} href={item.path} className="flex-1 flex justify-center">
                 <div className={cn(
