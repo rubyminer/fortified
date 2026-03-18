@@ -49,7 +49,7 @@ insert into movements (id, name, category, subcategory, tags, youtube_url, youtu
 -- ============================================================
 -- WORKOUT TEMPLATES (14+ rows)
 -- ============================================================
-insert into workouts (id, sport, subtrack, week_number, day_number, title, coach_note, warmup, main_work, accessory) values
+insert into workouts (id, discipline, subtrack, week_number, day_number, title, coach_note, warmup, main_work, accessory) values
 
 ('hyrox_sled_w1d1','hyrox','sled_carry_strength',1,1,'Sled Foundation — Lower Body Drive',
 'Week 1 is about establishing baseline strength in the hip drive patterns that power your sled. Keep all RPEs honest — this is not a max effort week. If anything feels heavier than prescribed, reduce the load.',
