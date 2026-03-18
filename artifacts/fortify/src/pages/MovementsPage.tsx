@@ -6,10 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Sport } from '@/lib/types';
 
-const SPORTS: { id: Sport | 'all'; label: string }[] = [
-  { id: 'all', label: 'All Sports' },
+const DISCIPLINES: { id: string; label: string }[] = [
+  { id: 'all', label: 'All Disciplines' },
   { id: 'crossfit', label: 'CrossFit' },
   { id: 'hyrox', label: 'Hyrox' },
   { id: 'athx', label: 'ATHX' },
@@ -21,13 +20,13 @@ export default function MovementsPage() {
   const { data: movements, isLoading } = useMovements();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<string>('all');
-  const [sport, setSport] = useState<Sport | 'all'>('all');
+  const [discipline, setDiscipline] = useState<string>('all');
 
   const filtered = movements?.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = category === 'all' || m.category === category;
-    const matchesSport = sport === 'all' || (m.tags && m.tags.includes(sport));
-    return matchesSearch && matchesCategory && matchesSport;
+    const matchesDiscipline = discipline === 'all' || (m.tags && m.tags.includes(discipline));
+    return matchesSearch && matchesCategory && matchesDiscipline;
   }) || [];
 
   return (
@@ -49,17 +48,17 @@ export default function MovementsPage() {
 
       <div className="space-y-3">
         <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-          {SPORTS.map(s => (
+          {DISCIPLINES.map(d => (
             <button
-              key={s.id}
-              onClick={() => setSport(s.id)}
+              key={d.id}
+              onClick={() => setDiscipline(d.id)}
               className={`whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest transition-colors ${
-                sport === s.id 
+                discipline === d.id 
                   ? 'bg-primary text-white' 
                   : 'bg-card text-muted-foreground border border-white/5'
               }`}
             >
-              {s.label}
+              {d.label}
             </button>
           ))}
         </div>
