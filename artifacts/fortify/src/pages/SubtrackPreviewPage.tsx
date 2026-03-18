@@ -94,7 +94,7 @@ export default function SubtrackPreviewPage() {
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="flex-1 px-5 pb-36 space-y-8"
+        className="flex-1 px-5 pb-52 space-y-8"
       >
 
         {/* Sport badge + Title */}
@@ -174,7 +174,7 @@ export default function SubtrackPreviewPage() {
       </motion.div>
 
       {/* Sticky bottom CTA */}
-      <div className="fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-background via-background/95 to-transparent pt-8">
+      <div className="fixed bottom-16 left-0 right-0 z-40 p-5 bg-gradient-to-t from-background via-background/95 to-transparent pt-8">
         <div className="flex gap-3 max-w-lg mx-auto">
           <Button
             variant="outline"
