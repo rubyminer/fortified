@@ -46,21 +46,23 @@ export default function FeedPage() {
 
       {/* Welcome + Subtrack Switcher */}
       <section className="space-y-3">
-        <div>
-          <h2 className="text-sm font-semibold tracking-widest text-primary uppercase mb-1">Welcome back</h2>
-          <h1 className="text-4xl font-display text-white truncate">{profile?.name}</h1>
-        </div>
+        <div className="flex items-end justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="text-sm font-semibold tracking-widest text-primary uppercase mb-1">Welcome back</h2>
+            <h1 className="text-4xl font-display text-white truncate">{profile?.name}</h1>
+          </div>
 
-        {/* Current subtrack chip — tap to switch */}
-        <button
-          onClick={() => setSwitcherOpen(o => !o)}
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-card/60 text-sm font-medium text-white hover:border-white/30 transition-all"
-        >
-          <span className="text-primary text-xs font-bold uppercase tracking-widest">{currentSportLabel}</span>
-          <span className="text-white/40">·</span>
-          <span>{subtrackLabel(profile?.subtrack ?? '')}</span>
-          <ChevronDown className={`w-4 h-4 text-white/50 transition-transform ${switcherOpen ? 'rotate-180' : ''}`} />
-        </button>
+          {/* Current subtrack chip — tap to switch */}
+          <button
+            onClick={() => setSwitcherOpen(o => !o)}
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-card/60 text-sm font-medium text-white hover:border-white/30 transition-all shrink-0 mb-1"
+          >
+            <span className="text-primary text-xs font-bold uppercase tracking-widest">{currentSportLabel}</span>
+            <span className="text-white/40">·</span>
+            <span className="max-w-[120px] truncate">{subtrackLabel(profile?.subtrack ?? '')}</span>
+            <ChevronDown className={`w-4 h-4 text-white/50 transition-transform ${switcherOpen ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
 
         {/* Inline subtrack switcher */}
         <AnimatePresence>
