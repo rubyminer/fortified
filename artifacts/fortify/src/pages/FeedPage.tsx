@@ -39,8 +39,6 @@ export default function FeedPage() {
     );
   }
 
-  const currentSportLabel = subtracks.find(g => g.sport === profile?.sport)?.label ?? profile?.sport;
-
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
 
@@ -57,9 +55,7 @@ export default function FeedPage() {
             onClick={() => setSwitcherOpen(o => !o)}
             className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-card/60 text-sm font-medium text-white hover:border-white/30 transition-all shrink-0 mb-1"
           >
-            <span className="text-primary text-xs font-bold uppercase tracking-widest">{currentSportLabel}</span>
-            <span className="text-white/40">·</span>
-            <span className="max-w-[120px] truncate">{subtrackLabel(profile?.subtrack ?? '')}</span>
+            <span className="max-w-[160px] truncate">{subtrackLabel(profile?.subtrack ?? '')}</span>
             <ChevronDown className={`w-4 h-4 text-white/50 transition-transform ${switcherOpen ? 'rotate-180' : ''}`} />
           </button>
         </div>
