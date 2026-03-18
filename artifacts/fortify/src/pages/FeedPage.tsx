@@ -1,27 +1,23 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useNextWorkout, useRecentSessions } from '@/hooks/use-workouts';
-import { supabase } from '@/lib/supabase';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { format } from 'date-fns';
 import { Flame, Target, CheckCircle2, ChevronRight, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { SessionWithWorkout, Sport } from '@/lib/types';
+import { SessionWithWorkout } from '@/lib/types';
 import { subtrackLabel } from '@/lib/subtracks';
-import { useSubtracks, buildSportFromSubtrack } from '@/hooks/use-subtracks';
-import { useQueryClient } from '@tanstack/react-query';
+import { useSubtracks } from '@/hooks/use-subtracks';
 
 export default function FeedPage() {
-  const { profile, refreshProfile } = useAuth();
-  const queryClient = useQueryClient();
+  const { profile } = useAuth();
+  const [, setLocation] = useLocation();
   const [switcherOpen, setSwitcherOpen] = useState(false);
-  const [isUpdating, setIsUpdating] = useState(false);
 
   const { data: subtracks = [] } = useSubtracks();
-  const getSport = buildSportFromSubtrack(subtracks);
 
   const { data: nextWorkout, isLoading: isWorkoutLoading } = useNextWorkout(
     profile?.sport,
@@ -30,23 +26,10 @@ export default function FeedPage() {
   );
   const { data: recentSessions, isLoading: isSessionsLoading } = useRecentSessions(profile?.id);
 
-  const handleSwitchSubtrack = async (subtractId: string) => {
-    if (!profile || subtractId === profile.subtrack || isUpdating) return;
-    setIsUpdating(true);
+  function handleSelectSubtrack(id: string) {
     setSwitcherOpen(false);
-    try {
-      const newSport = getSport(subtractId) as Sport;
-      const { error } = await supabase
-        .from('profiles')
-        .update({ subtrack: subtractId, sport: newSport })
-        .eq('id', profile.id);
-      if (error) throw error;
-      await refreshProfile();
-      queryClient.invalidateQueries({ queryKey: ['nextWorkout'] });
-    } finally {
-      setIsUpdating(false);
-    }
-  };
+    setLocation(`/subtrack/${id}`);
+  }
 
   if (isWorkoutLoading || isSessionsLoading) {
     return (
@@ -71,8 +54,7 @@ export default function FeedPage() {
         {/* Current subtrack chip — tap to switch */}
         <button
           onClick={() => setSwitcherOpen(o => !o)}
-          disabled={isUpdating}
-          className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-card/60 text-sm font-medium text-white hover:border-white/30 transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-card/60 text-sm font-medium text-white hover:border-white/30 transition-all"
         >
           <span className="text-primary text-xs font-bold uppercase tracking-widest">{currentSportLabel}</span>
           <span className="text-white/40">·</span>
@@ -100,7 +82,7 @@ export default function FeedPage() {
                     return (
                       <button
                         key={track.id}
-                        onClick={() => handleSwitchSubtrack(track.id)}
+                        onClick={() => handleSelectSubtrack(track.id)}
                         className={`w-full text-left px-4 py-3 flex items-center justify-between transition-colors ${
                           isActive
                             ? 'bg-primary/15 text-white'
@@ -128,14 +110,7 @@ export default function FeedPage() {
           <Target className="w-5 h-5 text-primary" /> Up Next
         </h3>
 
-        {isUpdating ? (
-          <Card className="border-white/10">
-            <CardContent className="p-8 flex items-center justify-center gap-3">
-              <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
-              <span className="text-muted-foreground text-sm">Switching track…</span>
-            </CardContent>
-          </Card>
-        ) : nextWorkout ? (
+        {nextWorkout ? (
           <Card className="border-primary/30 box-glow overflow-hidden relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl rounded-full -mr-10 -mt-10" />
             <CardHeader className="pb-2 relative z-10">

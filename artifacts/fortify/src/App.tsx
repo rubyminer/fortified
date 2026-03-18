@@ -14,6 +14,7 @@ import MovementDetailPage from "@/pages/MovementDetailPage";
 import PRsPage from "@/pages/PRsPage";
 import CommunityPage from "@/pages/CommunityPage";
 import ProfilePage from "@/pages/ProfilePage";
+import SubtrackPreviewPage from "@/pages/SubtrackPreviewPage";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -77,6 +78,13 @@ function Router() {
         {() => (
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        )}
+      </Route>
+      <Route path="/subtrack/:id">
+        {() => (
+          <ProtectedRoute>
+            <SubtrackPreviewPage />
           </ProtectedRoute>
         )}
       </Route>

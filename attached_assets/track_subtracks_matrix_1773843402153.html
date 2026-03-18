@@ -1,0 +1,80 @@
+<style>
+.matrix { width: 100%; border-collapse: collapse; font-size: 13px; }
+.matrix th { text-align: left; font-weight: 500; font-size: 12px; color: var(--color-text-secondary); border-bottom: 1px solid var(--color-border-tertiary); padding: 8px 12px; }
+.matrix td { padding: 10px 12px; border-bottom: 1px solid var(--color-border-tertiary); vertical-align: top; }
+.matrix tr:last-child td { border-bottom: none; }
+.track-label { font-weight: 500; font-size: 13px; color: var(--color-text-primary); }
+.sport-tag { display: inline-block; font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 4px; margin-bottom: 4px; }
+.cf { background: var(--color-background-info); color: var(--color-text-info); }
+.hx { background: #EAF3DE; color: #3B6D11; }
+.ax { background: #FAEEDA; color: #854F0B; }
+.sub-name { font-weight: 500; color: var(--color-text-primary); font-size: 13px; }
+.sub-desc { color: var(--color-text-secondary); font-size: 12px; margin-top: 2px; }
+.focus { color: var(--color-text-tertiary); font-size: 11px; margin-top: 4px; font-style: italic; }
+.section-header { background: var(--color-background-secondary); }
+.section-header td { padding: 6px 12px; }
+</style>
+<table class="matrix">
+  <tr>
+    <th style="width:22%">Sport / track</th>
+    <th style="width:26%">Sub-track</th>
+    <th style="width:52%">Rationale — what strength gap does this fix?</th>
+  </tr>
+
+  <tr class="section-header"><td colspan="3"><span class="sport-tag cf">CrossFit</span> <span style="font-size:12px;color:var(--color-text-secondary)">4-week cycles · 2–3 days/week</span></td></tr>
+  <tr>
+    <td rowspan="4"><span class="track-label">CrossFit</span></td>
+    <td><span class="sub-name">Lower body strength</span><div class="sub-desc">Squat patterns, posterior chain</div><div class="focus">Back squat, front squat, Romanian DL, hip thrust</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">Most CF athletes are quad-dominant with weak glutes and hamstrings. Fixing this improves clean, thruster, wall ball, box jump, and all squat-based movements. The highest-leverage sub-track for most CF athletes.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Overhead &amp; shoulder strength</span><div class="sub-desc">Press, stability, scapular control</div><div class="focus">Strict press, push press, Z-press, DB press, banded pull-aparts</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">Shoulder weakness and instability is the #1 limiter for gymnastics (HSPU, ring work, muscle-ups) and overhead barbell work (snatch, jerk). This track builds the pressing and stabilizing strength gymnastic volume can't provide.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Pulling strength</span><div class="sub-desc">Horizontal and vertical pulling</div><div class="focus">Weighted pull-up, bent-over row, single-arm DB row, face pull</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">CF athletes do enormous pressing volume (push-ups, dips, HSPU) but almost no loaded pulling outside kipping. This creates shoulder imbalances and limits muscle-up strength. Direct pulling work fixes the imbalance and boosts pulling gymnastics.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Muscular endurance</span><div class="sub-desc">Moderate load, higher rep ranges</div><div class="focus">Tempo squats, DB circuits, kettlebell complexes, barbell cycling</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">For athletes who can move well but fade in longer metcons. Programs moderate-load, moderate-rep work with short rest — trains the ability to move weight repeatedly without breakdown. Improves barbell cycling and touch-and-go efficiency.</td>
+  </tr>
+
+  <tr class="section-header"><td colspan="3"><span class="sport-tag hx">Hyrox</span> <span style="font-size:12px;color:var(--color-text-secondary)">5-week cycles · 2–3 days/week</span></td></tr>
+  <tr>
+    <td rowspan="4"><span class="track-label">Hyrox</span></td>
+    <td><span class="sub-name">Sled &amp; loaded carry strength</span><div class="sub-desc">Hip drive, unilateral, core bracing</div><div class="focus">Safety bar squat, Bulgarian split squat, farmer carry, sled work</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">The sled push/pull and sandbag carry are where Hyrox races are lost. Athletes without hip drive and loaded carry strength collapse in form under fatigue. This is the most race-specific strength gap to address.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Running economy strength</span><div class="sub-desc">Single-leg power, hip stability</div><div class="focus">Single-leg RDL, step-up, hip thrust, calf raises, ankle stability</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">Most Hyrox athletes come from running backgrounds with underdeveloped single-leg strength and hip stability — the exact traits that deteriorate pace over 8km of running under load. This track improves running economy without adding run volume.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Station-specific strength</span><div class="sub-desc">Wall ball, SkiErg, rowing, burpees</div><div class="focus">Goblet squat, pull-over, rowing-specific lat work, burpee-specific conditioning</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">Targets the exact movements in the race that aren't addressed by general strength training. SkiErg demands lat and core power. Rowing demands posterior chain. Wall ball demands front squat strength under fatigue. Each station has a strength prerequisite.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Strength endurance</span><div class="sub-desc">Aerobic strength, fatigue resistance</div><div class="focus">EMOMs, moderate-load complexes, barbell cycling, timed sets</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">Hyrox punishes athletes who are strong in isolation but weak under accumulated fatigue. This track trains the ability to maintain output on station 6, 7, 8 when the legs are already compromised from running.</td>
+  </tr>
+
+  <tr class="section-header"><td colspan="3"><span class="sport-tag ax">ATHX</span> <span style="font-size:12px;color:var(--color-text-secondary)">6-week cycles · 3–4 days/week</span></td></tr>
+  <tr>
+    <td rowspan="4"><span class="track-label">ATHX</span></td>
+    <td><span class="sub-name">Explosive power</span><div class="sub-desc">Concentric rate of force development</div><div class="focus">Power clean, hang power snatch, box jump, jump squat, trap bar DL</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">ATHX demands explosive output across many modalities — more so than Hyrox. Athletes need to develop rate of force development without full Olympic lifting technical demands. This track bridges that gap with power-focused variations.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Posterior chain &amp; hinge</span><div class="sub-desc">Deadlift patterns, hip extension</div><div class="focus">Conventional DL, Romanian DL, good morning, glute-ham raise</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">ATHX athletes often have CF backgrounds with underdeveloped hinge patterns — back squats but no deadlifts. Posterior chain strength directly translates to sprinting, jumping, and sled-based movements that appear in ATHX programming.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Upper body power</span><div class="sub-desc">Horizontal and vertical push/pull</div><div class="focus">Floor press, DB bench, weighted dips, landmine press, pendlay row</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">ATHX includes more upper body loading than Hyrox. Athletes need both horizontal and vertical push/pull strength. This track fills the gap between gymnastic volume and actual loaded upper body strength development.</td>
+  </tr>
+  <tr>
+    <td><span class="sub-name">Competition prep</span><div class="sub-desc">Full-body strength with conditioning</div><div class="focus">Complex-style programming, timed circuits, sport-specific loading</div></td>
+    <td style="color:var(--color-text-secondary);font-size:12px">A peaking sub-track for athletes 6–8 weeks out from an ATHX event. Higher intensity, lower volume, sport-specific loading patterns. Designed to be run after completing one of the other ATHX tracks.</div></td>
+  </tr>
+</table>
