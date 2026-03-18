@@ -1,16 +1,20 @@
 const CACHE_NAME = 'fortify-v1';
+
+// Derive base path from the SW's own location (e.g. /fortify/ or /)
+const BASE_PATH = self.location.pathname.replace(/\/sw\.js$/, '') || '';
+
 const APP_SHELL = [
-  '/',
-  '/index.html',
-  '/manifest.json',
+  BASE_PATH + '/',
+  BASE_PATH + '/index.html',
+  BASE_PATH + '/manifest.json',
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(APP_SHELL).catch((err) => {
-        console.warn('[SW] Failed to cache some shell assets:', err);
-      });
+      return Promise.allSettled(
+        APP_SHELL.map((url) => cache.add(url).catch(() => {}))
+      );
     })
   );
   self.skipWaiting();
@@ -32,7 +36,8 @@ self.addEventListener('fetch', (event) => {
 
   if (event.request.method !== 'GET') return;
 
-  if (url.hostname.includes('supabase.co') || url.pathname.startsWith('/api')) {
+  // Skip Supabase and external API requests — never cache these
+  if (url.hostname.includes('supabase.co') || url.hostname !== self.location.hostname) {
     return;
   }
 
@@ -50,7 +55,7 @@ self.addEventListener('fetch', (event) => {
         return response;
       }).catch(() => {
         if (event.request.destination === 'document') {
-          return caches.match('/index.html');
+          return caches.match(BASE_PATH + '/index.html');
         }
       });
     })
