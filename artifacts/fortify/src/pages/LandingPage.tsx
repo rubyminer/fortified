@@ -85,7 +85,7 @@ export default function LandingPage() {
       </header>
 
       {/* ── HERO ── */}
-      <section className="relative flex flex-col items-center justify-center min-h-screen text-center px-6 pt-16">
+      <section className="relative flex flex-col items-center justify-center min-h-[80vh] text-center px-6 pt-16">
         <div className="mb-6 inline-block border border-white/20 rounded-full px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-white/70">
           Supplemental Strength Programming
         </div>
@@ -111,7 +111,7 @@ export default function LandingPage() {
             See How It Works
           </button>
         </div>
-        <div className="mt-12 flex items-center gap-3 text-sm text-white/40">
+        <div className="mt-8 flex items-center gap-3 text-sm text-white/40">
           <span className="font-semibold text-white/60">Backed by 2POOD</span>
           <span>•</span>
           <span>Built for functional athletes</span>
@@ -119,7 +119,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── VALUE PROPS ── */}
-      <section className="py-24 px-6 md:px-12 max-w-6xl mx-auto">
+      <section className="pt-10 pb-24 px-6 md:px-12 max-w-6xl mx-auto">
         <h2 className="font-display text-4xl md:text-6xl text-center mb-3">
           STRENGTH THAT FITS
         </h2>
