@@ -315,16 +315,16 @@ export default function LandingPage() {
       </section>
 
       {/* ── APP FEATURES ── */}
-      <section id="features" className="py-24 px-6 md:px-12 max-w-6xl mx-auto">
-        <p className="text-center text-xs uppercase tracking-[0.3em] text-primary mb-4">App Features</p>
-        <h2 className="font-display text-4xl md:text-6xl text-center mb-20">
+      <section id="features" className="py-24 max-w-6xl mx-auto">
+        <p className="text-center text-xs uppercase tracking-[0.3em] text-primary mb-4 px-6 md:px-12">App Features</p>
+        <h2 className="font-display text-4xl md:text-6xl text-center mb-20 px-6 md:px-12">
           EVERYTHING YOU NEED<br />TO GET STRONGER
         </h2>
 
         <div className="flex flex-col gap-24">
           {/* Feature 1: Today's Workout */}
           <div>
-            <div className="flex items-start gap-4 mb-8">
+            <div className="flex items-start gap-4 mb-8 px-6 md:px-12">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <rect width="18" height="18" x="3" y="4" rx="2" ry="2" /><line x1="16" x2="16" y1="2" y2="6" /><line x1="8" x2="8" y1="2" y2="6" /><line x1="3" x2="21" y1="10" y2="10" />
@@ -342,7 +342,7 @@ export default function LandingPage() {
 
           {/* Feature 2: Set Logging */}
           <div>
-            <div className="flex items-start gap-4 mb-8">
+            <div className="flex items-start gap-4 mb-8 px-6 md:px-12">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
@@ -360,7 +360,7 @@ export default function LandingPage() {
 
           {/* Feature 3: PR Tracker + Community */}
           <div>
-            <div className="flex items-start gap-4 mb-8">
+            <div className="flex items-start gap-4 mb-8 px-6 md:px-12">
               <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" /><polyline points="16 7 22 7 22 13" />
