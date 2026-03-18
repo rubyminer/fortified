@@ -136,6 +136,5 @@ create index feed_likes_user_id_idx on feed_likes(user_id);
 create index workouts_sport_subtrack_idx on workouts(sport, subtrack);
 
 -- Enable Supabase Realtime on key tables
--- Run these in the Supabase dashboard under Database > Replication, or via:
--- alter publication supabase_realtime add table chat_messages;
--- alter publication supabase_realtime add table sessions;
+alter publication supabase_realtime add table chat_messages;
+alter publication supabase_realtime add table sessions;

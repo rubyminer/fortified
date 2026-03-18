@@ -18,14 +18,15 @@ export function useWorkout(id: string) {
   });
 }
 
-export function useNextWorkout(sport?: string, subtrack?: string) {
+export function useNextWorkout(sport?: string, subtrack?: string, userId?: string) {
   return useQuery({
-    queryKey: ['next-workout', sport, subtrack],
+    queryKey: ['next-workout', sport, subtrack, userId],
     queryFn: async () => {
-      // Get highest completed session for this track to determine next workout
+      // Get the most recent completed session for THIS user in this track
       const { data: sessions } = await supabase
         .from('sessions')
         .select('week_number, day_number')
+        .eq('user_id', userId)
         .eq('sport', sport)
         .eq('subtrack', subtrack)
         .order('week_number', { ascending: false })
@@ -73,7 +74,7 @@ export function useNextWorkout(sport?: string, subtrack?: string) {
 
       return workout as Workout;
     },
-    enabled: !!sport && !!subtrack,
+    enabled: !!sport && !!subtrack && !!userId,
   });
 }
 

@@ -11,7 +11,7 @@ import { SessionWithWorkout } from '@/lib/types';
 
 export default function FeedPage() {
   const { profile } = useAuth();
-  const { data: nextWorkout, isLoading: isWorkoutLoading } = useNextWorkout(profile?.sport, profile?.subtrack);
+  const { data: nextWorkout, isLoading: isWorkoutLoading } = useNextWorkout(profile?.sport, profile?.subtrack, profile?.id);
   const { data: recentSessions, isLoading: isSessionsLoading } = useRecentSessions(profile?.id);
 
   if (isWorkoutLoading || isSessionsLoading) {
