@@ -5,18 +5,16 @@ import { Drawer } from '@/components/Drawer';
 import { SkeletonTable } from '@/components/Skeleton';
 import { useToast } from '@/components/Toast';
 
-const SPORTS = ['crossfit', 'hyrox', 'athx'] as const;
-type Sport = typeof SPORTS[number];
-
-const SPORT_LABELS: Record<Sport, string> = {
-  crossfit: 'CrossFit',
-  hyrox: 'Hyrox',
-  athx: 'ATHX',
-};
+interface SportRow {
+  id: string;
+  label: string;
+  is_active: boolean;
+  sort_order: number;
+}
 
 interface Subtrack {
   id: string;
-  sport: Sport;
+  sport: string;
   name: string;
   description: string | null;
   is_active: boolean;
@@ -26,48 +24,61 @@ interface Subtrack {
 
 interface FormState {
   id: string;
-  sport: Sport;
+  sport: string;
   name: string;
   description: string;
   sort_order: number;
   is_active: boolean;
 }
 
-function defaultForm(): FormState {
-  return { id: '', sport: 'crossfit', name: '', description: '', sort_order: 0, is_active: true };
+const SPORT_COLORS: Record<string, { bg: string; text: string }> = {
+  crossfit: { bg: 'rgba(240,90,40,0.15)',   text: '#F05A28' },
+  hyrox:    { bg: 'rgba(59,130,246,0.15)',   text: '#3b82f6' },
+  athx:     { bg: 'rgba(168,85,247,0.15)',   text: '#a855f7' },
+};
+const FALLBACK_COLOR = { bg: 'rgba(100,200,100,0.15)', text: '#64c864' };
+
+function sportColor(id: string) {
+  return SPORT_COLORS[id] ?? FALLBACK_COLOR;
 }
 
 function slugify(text: string): string {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
 }
 
+function defaultForm(firstSportId: string): FormState {
+  return { id: '', sport: firstSportId, name: '', description: '', sort_order: 0, is_active: true };
+}
+
 export function Subtracks() {
   const { showToast } = useToast();
+  const [sports, setSports] = useState<SportRow[]>([]);
   const [rows, setRows] = useState<Subtrack[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sportFilter, setSportFilter] = useState<Sport | 'all'>('all');
+  const [sportFilter, setSportFilter] = useState<string>('all');
   const [activeOnly, setActiveOnly] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [form, setForm] = useState<FormState>(defaultForm());
+  const [form, setForm] = useState<FormState>(defaultForm('crossfit'));
   const [saving, setSaving] = useState(false);
 
-  const fetch = useCallback(async () => {
+  const fetchAll = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('subtracks')
-      .select('*')
-      .order('sport')
-      .order('sort_order');
-    setRows((data ?? []) as Subtrack[]);
+    const [{ data: sportsData }, { data: subtracksData }] = await Promise.all([
+      supabase.from('sports').select('id, label, is_active, sort_order').order('sort_order'),
+      supabase.from('subtracks').select('*').order('sport').order('sort_order'),
+    ]);
+    const sportList = (sportsData ?? []) as SportRow[];
+    setSports(sportList);
+    setRows((subtracksData ?? []) as Subtrack[]);
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetch(); }, [fetch]);
+  useEffect(() => { fetchAll(); }, [fetchAll]);
 
   function openNew() {
     setEditId(null);
-    setForm(defaultForm());
+    setForm(defaultForm(sports[0]?.id ?? 'crossfit'));
     setDrawerOpen(true);
   }
 
@@ -105,7 +116,7 @@ export function Subtracks() {
     if (error) { showToast(error.message, 'error'); return; }
     showToast(editId ? 'Subtrack updated' : 'Subtrack created', 'success');
     setDrawerOpen(false);
-    fetch();
+    fetchAll();
   }
 
   async function toggleActive() {
@@ -116,18 +127,15 @@ export function Subtracks() {
     if (!error) {
       showToast(form.is_active ? 'Subtrack deactivated' : 'Subtrack activated', 'info');
       setDrawerOpen(false);
-      fetch();
+      fetchAll();
     }
   }
+
+  const sportLabel = (id: string) => sports.find(s => s.id === id)?.label ?? id;
 
   const filtered = rows
     .filter(r => sportFilter === 'all' || r.sport === sportFilter)
     .filter(r => !activeOnly || r.is_active);
-
-  const groupedCount = SPORTS.reduce<Record<string, number>>((acc, s) => {
-    acc[s] = rows.filter(r => r.sport === s).length;
-    return acc;
-  }, {});
 
   return (
     <Layout section="Subtracks">
@@ -141,30 +149,42 @@ export function Subtracks() {
         <button className="btn btn-primary" onClick={openNew}>+ New Subtrack</button>
       </div>
 
-      {/* Stats */}
-      <div style={{ display: 'flex', gap: 12, marginBottom: 20 }}>
-        {SPORTS.map(s => (
-          <div key={s} style={{
-            background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8,
-            padding: '12px 20px', minWidth: 120,
-          }}>
-            <div style={{ fontSize: 22, fontWeight: 700, color: '#f0f0f0' }}>{groupedCount[s] ?? 0}</div>
-            <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{SPORT_LABELS[s]}</div>
-          </div>
-        ))}
+      {/* Stats per sport */}
+      <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
+        {sports.map(s => {
+          const c = sportColor(s.id);
+          return (
+            <div key={s.id} style={{
+              background: '#1a1a1a', border: '1px solid #2a2a2a', borderRadius: 8,
+              padding: '12px 20px', minWidth: 120,
+            }}>
+              <div style={{ fontSize: 22, fontWeight: 700, color: c.text }}>
+                {rows.filter(r => r.sport === s.id).length}
+              </div>
+              <div style={{ fontSize: 12, color: '#888', marginTop: 2 }}>{s.label}</div>
+            </div>
+          );
+        })}
       </div>
 
       {/* Filters */}
       <div className="filter-bar">
-        <div style={{ display: 'flex', gap: 6 }}>
-          {(['all', ...SPORTS] as const).map(s => (
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          <button
+            type="button"
+            className={`btn btn-sm ${sportFilter === 'all' ? 'btn-primary' : 'btn-secondary'}`}
+            onClick={() => setSportFilter('all')}
+          >
+            All Sports
+          </button>
+          {sports.map(s => (
             <button
-              key={s}
+              key={s.id}
               type="button"
-              className={`btn btn-sm ${sportFilter === s ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setSportFilter(s as Sport | 'all')}
+              className={`btn btn-sm ${sportFilter === s.id ? 'btn-primary' : 'btn-secondary'}`}
+              onClick={() => setSportFilter(s.id)}
             >
-              {s === 'all' ? 'All Sports' : SPORT_LABELS[s]}
+              {s.label}
             </button>
           ))}
         </div>
@@ -190,29 +210,31 @@ export function Subtracks() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(s => (
-                <tr key={s.id} style={{ cursor: 'pointer' }} onClick={() => openEdit(s)}>
-                  <td style={{ fontWeight: 500 }}>{s.name}</td>
-                  <td>
-                    <span style={{
-                      fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
-                      background: s.sport === 'crossfit' ? 'rgba(240,90,40,0.15)' : s.sport === 'hyrox' ? 'rgba(59,130,246,0.15)' : 'rgba(168,85,247,0.15)',
-                      color: s.sport === 'crossfit' ? '#F05A28' : s.sport === 'hyrox' ? '#3b82f6' : '#a855f7',
-                      textTransform: 'uppercase', letterSpacing: '0.08em',
-                    }}>
-                      {SPORT_LABELS[s.sport]}
-                    </span>
-                  </td>
-                  <td style={{ color: '#888', fontSize: 12, fontFamily: 'monospace' }}>{s.id}</td>
-                  <td style={{ color: '#888', fontSize: 12 }}>{s.description ?? '—'}</td>
-                  <td style={{ textAlign: 'center', color: '#888' }}>{s.sort_order}</td>
-                  <td>
-                    <span className={`badge badge-${s.is_active ? 'active' : 'inactive'}`}>
-                      {s.is_active ? 'Active' : 'Inactive'}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {filtered.map(s => {
+                const c = sportColor(s.sport);
+                return (
+                  <tr key={s.id} style={{ cursor: 'pointer' }} onClick={() => openEdit(s)}>
+                    <td style={{ fontWeight: 500 }}>{s.name}</td>
+                    <td>
+                      <span style={{
+                        fontSize: 11, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+                        background: c.bg, color: c.text,
+                        textTransform: 'uppercase', letterSpacing: '0.08em',
+                      }}>
+                        {sportLabel(s.sport)}
+                      </span>
+                    </td>
+                    <td style={{ color: '#888', fontSize: 12, fontFamily: 'monospace' }}>{s.id}</td>
+                    <td style={{ color: '#888', fontSize: 12 }}>{s.description ?? '—'}</td>
+                    <td style={{ textAlign: 'center', color: '#888' }}>{s.sort_order}</td>
+                    <td>
+                      <span className={`badge badge-${s.is_active ? 'active' : 'inactive'}`}>
+                        {s.is_active ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
               {filtered.length === 0 && (
                 <tr>
                   <td colSpan={6} style={{ color: '#555', textAlign: 'center', padding: 32 }}>
@@ -250,11 +272,7 @@ export function Subtracks() {
               value={form.name}
               onChange={e => {
                 const name = e.target.value;
-                setForm(f => ({
-                  ...f,
-                  name,
-                  id: editId ? f.id : slugify(name),
-                }));
+                setForm(f => ({ ...f, name, id: editId ? f.id : slugify(name) }));
               }}
               placeholder="e.g. Overhead & Shoulder"
             />
@@ -263,14 +281,17 @@ export function Subtracks() {
             <label>Sport</label>
             <select
               value={form.sport}
-              onChange={e => setForm({ ...form, sport: e.target.value as Sport })}
+              onChange={e => setForm({ ...form, sport: e.target.value })}
               disabled={!!editId}
               style={editId ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
             >
-              {SPORTS.map(s => (
-                <option key={s} value={s}>{SPORT_LABELS[s]}</option>
+              {sports.map(s => (
+                <option key={s.id} value={s.id}>{s.label}</option>
               ))}
             </select>
+            <p style={{ fontSize: 11, color: '#666', marginTop: 4 }}>
+              Sport cannot be changed after creation.
+            </p>
           </div>
         </div>
 
@@ -285,7 +306,7 @@ export function Subtracks() {
               style={editId ? { opacity: 0.5, cursor: 'not-allowed', fontFamily: 'monospace' } : { fontFamily: 'monospace' }}
             />
             <p style={{ fontSize: 11, color: '#666', marginTop: 4 }}>
-              Unique identifier used in the database. Auto-generated from name.
+              Auto-generated from name. Cannot be changed after creation.
             </p>
           </div>
           <div className="form-group">
