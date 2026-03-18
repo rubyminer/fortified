@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { format } from 'date-fns';
 import { Plus, Trophy } from 'lucide-react';
 import { toast } from 'sonner';
+import { PersonalRecord } from '@/lib/types';
 
 export default function PRsPage() {
   const { user } = useAuth();
@@ -51,7 +52,7 @@ export default function PRsPage() {
       acc[pr.movement] = pr; // keep highest weight if multiple exist
     }
     return acc;
-  }, {} as Record<string, any>);
+  }, {} as Record<string, PersonalRecord>);
 
   const prList = Object.values(groupedPRs || {}).sort((a, b) => b.weight_lbs - a.weight_lbs);
 

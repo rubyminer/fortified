@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, Info, PlayCircle, Check, Timer } from 'lucide-react';
 import { toast } from 'sonner';
 import { SetLog, WorkoutExercise } from '@/lib/types';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function WorkoutDetailPage() {
   const [, params] = useRoute('/workout/:id');
@@ -68,7 +68,7 @@ export default function WorkoutDetailPage() {
       });
       toast.success('Session completed and saved!');
       setLocation('/');
-    } catch (err: any) {
+    } catch {
       toast.error('Failed to save session');
     }
   };

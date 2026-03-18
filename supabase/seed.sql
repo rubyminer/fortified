@@ -41,7 +41,10 @@ insert into movements (id, name, category, subcategory, tags, youtube_url, youtu
 ('box_jump','Box Jump','explosive','box_jump','{crossfit,athx,hyrox,bodyweight,explosive,power,plyo}','https://www.youtube.com/watch?v=52r_Ul5k03g','52r_Ul5k03g',ARRAY['Load hips before jumping','Land softly in partial squat','Full hip extension at top','Step down do not jump down'],'Primary lower body power and rate-of-force development tool. Used across all three sports.','beginner',ARRAY['plyo_box'],ARRAY['glutes','quadriceps','calves'],ARRAY['hamstrings','core']),
 ('jump_squat','Jump Squat','explosive','jump_squat','{athx,crossfit,barbell,dumbbell,bodyweight,explosive,power}','https://www.youtube.com/watch?v=CnBmiBqp-AI','CnBmiBqp-AI',ARRAY['Quarter squat depth','Explode through full extension','Land soft absorb through hips','Immediate rebound for touch-and-go sets'],'Loaded explosive power development. ATHX-specific tool for building rate of force development under load.','intermediate',ARRAY['barbell','dumbbell','bodyweight'],ARRAY['quadriceps','glutes'],ARRAY['calves','core']),
 ('pallof_press','Pallof Press','core','anti_rotation','{crossfit,hyrox,athx,cable_machine,resistance_band,core,anti_rotation}','https://www.youtube.com/watch?v=AH_QZLm_0-s','AH_QZLm_0-s',ARRAY['Anchor at chest height','Press out resist rotation','Hips square throughout','Exhale on press'],'The gold standard anti-rotation core exercise. Builds lateral core stability for carries and running.','beginner',ARRAY['cable_machine','resistance_band'],ARRAY['obliques','transverse_abdominis'],ARRAY['glutes','hip_stabilizers']),
-('calf_raise','Calf Raise','accessory','isolation','{hyrox,running_economy,bodyweight,dumbbell,ankle_stability}','https://www.youtube.com/watch?v=gwLzBJYoWlI','gwLzBJYoWlI',ARRAY['Full range of motion','Pause at top','Slow controlled descent','Single-leg for progression'],'Neglected but essential for running athletes. Builds ankle stiffness and calf endurance.','beginner',ARRAY['bodyweight','dumbbell','machine'],ARRAY['gastrocnemius','soleus'],ARRAY['tibialis_anterior']);
+('calf_raise','Calf Raise','accessory','isolation','{hyrox,running_economy,bodyweight,dumbbell,ankle_stability}','https://www.youtube.com/watch?v=gwLzBJYoWlI','gwLzBJYoWlI',ARRAY['Full range of motion','Pause at top','Slow controlled descent','Single-leg for progression'],'Neglected but essential for running athletes. Builds ankle stiffness and calf endurance.','beginner',ARRAY['bodyweight','dumbbell','machine'],ARRAY['gastrocnemius','soleus'],ARRAY['tibialis_anterior']),
+('nordic_hamstring_curl','Nordic Hamstring Curl','hinge','nordic','{crossfit,hyrox,athx,posterior_chain,bodyweight,injury_prevention}','https://www.youtube.com/watch?v=d8PSL8GKgX4','d8PSL8GKgX4',ARRAY['Knees anchored firmly','Descend as slowly as possible','Use hands to catch at bottom','Drive back up through hamstrings not arms'],'One of the most effective hamstring injury-prevention exercises. Builds eccentric hamstring strength at long muscle lengths.','advanced',ARRAY['bodyweight','ghr_machine'],ARRAY['hamstrings'],ARRAY['glutes','calves']),
+('tricep_pushdown','Tricep Pushdown','press_horizontal','isolation','{crossfit,athx,cable_machine,tricep,elbow_lockout}','https://www.youtube.com/watch?v=2-LAMcpzODU','2-LAMcpzODU',ARRAY['Elbows stay at sides throughout','Full extension at bottom','Control the return slowly','Do not lean forward excessively'],'Isolates the triceps for lockout strength. Supports overhead pressing and barbell cycling capacity.','beginner',ARRAY['cable_machine','resistance_band'],ARRAY['triceps'],ARRAY['forearms']),
+('copenhagen_plank','Copenhagen Plank','core','lateral','{hyrox,crossfit,athx,bodyweight,adductor,hip_stability}','https://www.youtube.com/watch?v=9KAibGNt4q4','9KAibGNt4q4',ARRAY['Top leg on bench lower leg free','Maintain neutral pelvis','Drive hip up do not sag','Progress from knees to full leg'],'Builds adductor and lateral hip strength that is frequently undertrained. Directly supports running economy and single-leg stability.','intermediate',ARRAY['bench','bodyweight'],ARRAY['adductors','obliques'],ARRAY['hip_abductors','core']);
 
 -- ============================================================
 -- WORKOUT TEMPLATES (14+ rows)
@@ -134,32 +137,41 @@ insert into workouts (id, sport, subtrack, week_number, day_number, title, coach
 
 -- ============================================================
 -- CHAT SEED MESSAGES
--- Note: user_id values are placeholders — these messages will
--- appear in the community feed as coach/athlete examples.
--- In production, replace with real user IDs or remove this seed.
+-- These coach messages are inserted using a temporary seed profile
+-- so that the FK constraint (user_id -> profiles -> auth.users) is
+-- satisfied. The seed profile is marked with a recognizable UUID.
+-- Athletes posting in the chat community will appear naturally once
+-- real users sign up.
 -- ============================================================
 
--- Using a dummy coach UUID for seeded messages (not tied to real auth users)
--- These will only display if you have matching profile rows.
--- To see seeded chat, either skip this section or insert matching profiles first.
+-- Step 1: Insert a temporary seed user into auth.users
+-- NOTE: In Supabase, auth.users is managed by GoTrue. You cannot
+-- directly insert into auth.users via the SQL editor unless you
+-- are running with service_role key and have disabled RLS.
+-- SKIP the chat seed section if you do not have service_role access.
+-- The app works fully without seeded chat messages.
 
+-- Step 2 (optional — requires service_role): create seed coach profile
+-- insert into auth.users (id, email, created_at, updated_at, raw_user_meta_data, role, aud)
+-- values ('00000000-0000-0000-0000-000000000001', 'coach@fortify.app', now(), now(), '{}', 'authenticated', 'authenticated');
+
+-- insert into profiles (id, name, sport, subtrack, level, frequency, is_beta)
+-- values ('00000000-0000-0000-0000-000000000001', 'Coach Marcus', 'crossfit', 'overhead_shoulder_strength', 'advanced', 4, true);
+
+-- Step 3 (optional — run only after Step 2 above):
 -- Sled & Loaded Carry track chat
-insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
-('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Welcome to the Sled & Loaded Carry track. This 5-week cycle is going to build the hip drive and carry strength that directly translates to your Hyrox race. Ask questions here any time — I check this daily.',true,true,now() - interval '6 days'),
-('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','That is completely normal Jenna. The safety bar demands more upper back engagement than a straight bar. It will click by Week 2.',true,false,now() - interval '5 days'),
-('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','No straps for this programming Tom. The grip demand is part of the stimulus. If your grip fails well before your legs do, that is actually important information — it means grip is a limiter in your Hyrox race.',true,false,now() - interval '4 days'),
-('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','That is exactly the right kind of soreness Mike. Most people underactivate glutes in their primary training. This track is waking them up. It should ease up by Week 3.',true,false,now() - interval '20 hours');
+-- insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
+-- ('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Welcome to the Sled & Loaded Carry track. This 5-week cycle is going to build the hip drive and carry strength that directly translates to your Hyrox race. Ask questions here any time — I check this daily.',true,true,now() - interval '6 days'),
+-- ('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','That is completely normal. The safety bar demands more upper back engagement than a straight bar. It will click by Week 2.',true,false,now() - interval '5 days'),
+-- ('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','No straps for this programming. The grip demand is part of the stimulus. If your grip fails well before your legs do, that is important information — grip is a limiter in your Hyrox race.',true,false,now() - interval '4 days'),
+-- ('sled_carry_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','That is exactly the right kind of soreness. Most people underactivate glutes in their primary training. This track is waking them up. It should ease up by Week 3.',true,false,now() - interval '20 hours');
 
--- Overhead Shoulder Strength track chat
-insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
-('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Overhead track is live. This cycle will build the pressing and pulling strength that makes gymnastics movements feel easier. Z-Press is going to be your best friend and worst enemy simultaneously.',true,true,now() - interval '6 days'),
-('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Completely normal Sarah — especially for CrossFit athletes who rely on leg drive. An empty bar Z-Press done well is more valuable than 95 lbs done with a collapsing torso.',true,false,now() - interval '5 days'),
-('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Ideally yes Dave — either a rest day or at minimum 6 hours after your WOD. The pull-up work needs you fresh enough to actually add load. Fatigued pull-ups just reinforce the kipping pattern.',true,false,now() - interval '4 days'),
-('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Ryan if the strict press is consistently uncomfortable on one side flag that for me. We can program more landmine work and less strict press for you this cycle.',true,false,now() - interval '2 days');
+-- Overhead Shoulder Strength track chat (optional)
+-- insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
+-- ('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','Overhead track is live. This cycle will build the pressing and pulling strength that makes gymnastics movements feel easier. Z-Press is going to be your best friend and worst enemy simultaneously.',true,true,now() - interval '6 days'),
+-- ('overhead_shoulder_strength','00000000-0000-0000-0000-000000000001','Coach Marcus','An empty bar Z-Press done well is more valuable than 95 lbs done with a collapsing torso.',true,false,now() - interval '5 days');
 
--- ATHX Explosive Power track chat
-insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
-('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','ATHX Explosive Power track is open. This 6-week cycle builds the rate of force development you need for every explosive demand in ATHX competition. Do not chase load on the Olympic lifting variations — speed is the goal.',true,true,now() - interval '6 days'),
-('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','Try thinking "elbows to the wall in front of you" as you catch Chris. Also check that you are not catching too far back on your heels — a slightly forward catch position allows faster elbow turnover.',true,false,now() - interval '5 days'),
-('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','Pressing out means the bar is getting away from you Katia. Focus on keeping the bar close to your body all the way through the pull before it goes overhead. Drop the load 20% and film yourself.',true,false,now() - interval '4 days'),
-('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','That sequencing is intentional Ben — in ATHX you need to produce power when fatigued. But in Week 1 if the jump quality is really degraded by the last set it is okay to end a rep or two early.',true,false,now() - interval '2 days');
+-- ATHX Explosive Power track chat (optional)
+-- insert into chat_messages (subtrack, user_id, author_name, content, is_coach, is_pinned, created_at) values
+-- ('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','ATHX Explosive Power track is open. This 6-week cycle builds the rate of force development you need for every explosive demand in ATHX competition. Do not chase load on the Olympic lifting variations — speed is the goal.',true,true,now() - interval '6 days'),
+-- ('explosive_power','00000000-0000-0000-0000-000000000001','Coach Marcus','Focus on keeping the bar close to your body all the way through the pull before it goes overhead. Drop the load 20% and film yourself.',true,false,now() - interval '4 days');

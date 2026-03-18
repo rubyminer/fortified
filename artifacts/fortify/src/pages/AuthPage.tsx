@@ -29,8 +29,9 @@ export default function AuthPage() {
         if (error) throw error;
         setLocation('/');
       }
-    } catch (err: any) {
-      toast.error(err.message || 'Authentication failed');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Authentication failed';
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }

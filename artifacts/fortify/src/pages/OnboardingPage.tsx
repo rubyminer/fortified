@@ -67,8 +67,9 @@ export default function OnboardingPage() {
       await refreshProfile();
       toast.success('Profile created! Welcome to Fortify.');
       setLocation('/');
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to create profile');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to create profile';
+      toast.error(message);
       setIsSubmitting(false);
     }
   };

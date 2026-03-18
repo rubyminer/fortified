@@ -48,6 +48,10 @@ export interface Session {
   completed_at: string;
 }
 
+export interface SessionWithWorkout extends Session {
+  workouts: { title: string } | null;
+}
+
 export interface SetLog {
   id: string;
   session_id: string;

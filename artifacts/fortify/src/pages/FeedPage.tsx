@@ -7,6 +7,7 @@ import { Link } from 'wouter';
 import { format } from 'date-fns';
 import { Flame, Target, CheckCircle2, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { SessionWithWorkout } from '@/lib/types';
 
 export default function FeedPage() {
   const { profile } = useAuth();
@@ -101,7 +102,7 @@ export default function FeedPage() {
         <h3 className="font-display text-2xl tracking-wide">Recent History</h3>
         {recentSessions && recentSessions.length > 0 ? (
           <div className="space-y-3">
-            {recentSessions.map((session: any) => (
+            {(recentSessions as SessionWithWorkout[]).map((session) => (
               <Card key={session.id} className="bg-card/40 border-white/5 hover:border-white/10 transition-colors">
                 <CardContent className="p-4 flex justify-between items-center">
                   <div>
