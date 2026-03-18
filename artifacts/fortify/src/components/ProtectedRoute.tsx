@@ -29,3 +29,30 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   return <AppLayout>{children}</AppLayout>;
 }
+
+export function OnboardingRoute({ children }: { children: React.ReactNode }) {
+  const { user, profile, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (!user) {
+        setLocation('/auth');
+      } else if (profile) {
+        setLocation('/');
+      }
+    }
+  }, [user, profile, isLoading, setLocation]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+  if (!user || profile) return null;
+
+  return <>{children}</>;
+}

@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ProtectedRoute, OnboardingRoute } from "@/components/ProtectedRoute";
 
 import AuthPage from "@/pages/AuthPage";
 import OnboardingPage from "@/pages/OnboardingPage";
@@ -24,9 +24,9 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <Route path="/onboarding">
         {() => (
-          <ProtectedRoute>
+          <OnboardingRoute>
             <OnboardingPage />
-          </ProtectedRoute>
+          </OnboardingRoute>
         )}
       </Route>
       
