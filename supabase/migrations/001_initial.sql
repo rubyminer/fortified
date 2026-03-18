@@ -15,7 +15,45 @@ create table profiles (
 alter table profiles enable row level security;
 create policy "profiles_own" on profiles for all using (auth.uid() = id);
 
--- Workout sessions
+-- Movement library (created before set_logs which references movement_id)
+create table movements (
+  id text primary key,
+  name text not null,
+  category text not null,
+  subcategory text,
+  tags text[] default '{}',
+  youtube_url text,
+  youtube_embed_id text,
+  cue_points text[],
+  description text,
+  difficulty text,
+  equipment text[],
+  primary_muscles text[],
+  secondary_muscles text[],
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+alter table movements enable row level security;
+create policy "movements_public_read" on movements for select using (true);
+
+-- Workout templates (created before sessions which references workout_id)
+create table workouts (
+  id text primary key,
+  sport text not null,
+  subtrack text not null,
+  week_number int not null,
+  day_number int not null,
+  title text not null,
+  coach_note text,
+  warmup jsonb,
+  main_work jsonb,
+  accessory jsonb,
+  created_at timestamptz default now()
+);
+alter table workouts enable row level security;
+create policy "workouts_public_read" on workouts for select using (true);
+
+-- Workout sessions (references profiles and workouts)
 create table sessions (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references profiles(id) on delete cascade,
@@ -23,14 +61,14 @@ create table sessions (
   subtrack text not null,
   week_number int not null,
   day_number int not null,
-  workout_id text not null,
+  workout_id text references workouts(id) on delete set null,
   notes text,
   completed_at timestamptz default now()
 );
 alter table sessions enable row level security;
 create policy "sessions_own" on sessions for all using (auth.uid() = user_id);
 
--- Set logs
+-- Set logs (references sessions)
 create table set_logs (
   id uuid primary key default gen_random_uuid(),
   session_id uuid references sessions(id) on delete cascade,
@@ -59,44 +97,6 @@ create table personal_records (
 );
 alter table personal_records enable row level security;
 create policy "prs_own" on personal_records for all using (auth.uid() = user_id);
-
--- Movement library
-create table movements (
-  id text primary key,
-  name text not null,
-  category text not null,
-  subcategory text,
-  tags text[] default '{}',
-  youtube_url text,
-  youtube_embed_id text,
-  cue_points text[],
-  description text,
-  difficulty text,
-  equipment text[],
-  primary_muscles text[],
-  secondary_muscles text[],
-  is_active boolean default true,
-  created_at timestamptz default now()
-);
-alter table movements enable row level security;
-create policy "movements_public_read" on movements for select using (true);
-
--- Workout templates
-create table workouts (
-  id text primary key,
-  sport text not null,
-  subtrack text not null,
-  week_number int not null,
-  day_number int not null,
-  title text not null,
-  coach_note text,
-  warmup jsonb,
-  main_work jsonb,
-  accessory jsonb,
-  created_at timestamptz default now()
-);
-alter table workouts enable row level security;
-create policy "workouts_public_read" on workouts for select using (true);
 
 -- Community chat
 create table chat_messages (
