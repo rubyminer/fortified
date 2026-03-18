@@ -64,7 +64,7 @@ export default function FeedPage() {
           </button>
         </div>
 
-        {/* Inline subtrack switcher */}
+        {/* Inline subtrack switcher — filtered to current sport */}
         <AnimatePresence>
           {switcherOpen && (
             <motion.div
@@ -74,33 +74,29 @@ export default function FeedPage() {
               transition={{ duration: 0.18 }}
               className="rounded-2xl border border-white/10 bg-card/80 backdrop-blur overflow-hidden"
             >
-              {subtracks.map(({ sport, label, subtracks: tracks }) => (
-                <div key={sport}>
-                  <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                    {label}
-                  </p>
-                  {tracks.map(track => {
-                    const isActive = profile?.subtrack === track.id;
-                    return (
-                      <button
-                        key={track.id}
-                        onClick={() => handleSelectSubtrack(track.id)}
-                        className={`w-full text-left px-4 py-3 flex items-center justify-between transition-colors ${
-                          isActive
-                            ? 'bg-primary/15 text-white'
-                            : 'text-white/70 hover:bg-white/5 hover:text-white'
-                        }`}
-                      >
-                        <div>
-                          <span className="font-medium text-sm">{track.name}</span>
-                          <p className="text-xs text-muted-foreground">{track.desc}</p>
-                        </div>
-                        {isActive && <div className="w-2 h-2 rounded-full bg-primary shrink-0" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              ))}
+              {subtracks
+                .filter(g => g.sport === profile?.sport)
+                .flatMap(g => g.subtracks)
+                .map(track => {
+                  const isActive = profile?.subtrack === track.id;
+                  return (
+                    <button
+                      key={track.id}
+                      onClick={() => handleSelectSubtrack(track.id)}
+                      className={`w-full text-left px-4 py-3 flex items-center justify-between transition-colors ${
+                        isActive
+                          ? 'bg-primary/15 text-white'
+                          : 'text-white/70 hover:bg-white/5 hover:text-white'
+                      }`}
+                    >
+                      <div>
+                        <span className="font-medium text-sm">{track.name}</span>
+                        <p className="text-xs text-muted-foreground">{track.desc}</p>
+                      </div>
+                      {isActive && <div className="w-2 h-2 rounded-full bg-primary shrink-0" />}
+                    </button>
+                  );
+                })}
             </motion.div>
           )}
         </AnimatePresence>
