@@ -5,6 +5,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { Dashboard } from '@/pages/Dashboard';
 import { Workouts } from '@/pages/Workouts';
 import { Movements } from '@/pages/Movements';
+import { Subtracks } from '@/pages/Subtracks';
 import { Users } from '@/pages/Users';
 import { Community } from '@/pages/Community';
 import { Analytics } from '@/pages/Analytics';
@@ -36,6 +37,7 @@ function AppRoutes() {
       <Route path="/" component={Dashboard} />
       <Route path="/workouts" component={Workouts} />
       <Route path="/movements" component={Movements} />
+      <Route path="/subtracks" component={Subtracks} />
       <Route path="/users" component={Users} />
       <Route path="/community" component={Community} />
       <Route path="/analytics" component={Analytics} />

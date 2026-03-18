@@ -8,7 +8,8 @@ import { Card, CardContent } from '@/components/ui/card';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import { Sport } from '@/lib/types';
-import { sportFromSubtrack, ALL_SUBTRACKS } from '@/lib/subtracks';
+import { useSubtracks, buildSportFromSubtrack } from '@/hooks/use-subtracks';
+import { ALL_SUBTRACKS } from '@/lib/subtracks';
 
 export default function OnboardingPage() {
   const { user, refreshProfile } = useAuth();
@@ -16,18 +17,21 @@ export default function OnboardingPage() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { data: subtracks = ALL_SUBTRACKS } = useSubtracks();
+  const getSport = buildSportFromSubtrack(subtracks);
+
   const [formData, setFormData] = useState({
     name: '',
     subtrack: '',
   });
 
-  const selectedSport = formData.subtrack ? sportFromSubtrack(formData.subtrack) : null;
+  const selectedSport = formData.subtrack ? getSport(formData.subtrack) : null;
 
   const handleSubmit = async () => {
     if (!user) return;
     setIsSubmitting(true);
     try {
-      const sport = sportFromSubtrack(formData.subtrack) as Sport;
+      const sport = getSport(formData.subtrack) as Sport;
       const { error } = await supabase.from('profiles').insert([{
         id: user.id,
         name: formData.name,
@@ -110,11 +114,11 @@ export default function OnboardingPage() {
                 </div>
 
                 <div className="space-y-6">
-                  {ALL_SUBTRACKS.map(({ sport, label, subtracks }) => (
+                  {subtracks.map(({ sport, label, subtracks: tracks }) => (
                     <div key={sport}>
                       <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">{label}</p>
                       <div className="space-y-2">
-                        {subtracks.map(track => (
+                        {tracks.map(track => (
                           <Card
                             key={track.id}
                             className={`cursor-pointer transition-all duration-200 ${formData.subtrack === track.id ? 'border-primary ring-1 ring-primary/50 bg-primary/10' : 'hover:border-white/20'}`}

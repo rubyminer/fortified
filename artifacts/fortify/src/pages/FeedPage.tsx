@@ -10,7 +10,8 @@ import { format } from 'date-fns';
 import { Flame, Target, CheckCircle2, ChevronRight, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SessionWithWorkout, Sport } from '@/lib/types';
-import { ALL_SUBTRACKS, sportFromSubtrack, subtrackLabel } from '@/lib/subtracks';
+import { subtrackLabel } from '@/lib/subtracks';
+import { useSubtracks, buildSportFromSubtrack } from '@/hooks/use-subtracks';
 import { useQueryClient } from '@tanstack/react-query';
 
 export default function FeedPage() {
@@ -18,6 +19,9 @@ export default function FeedPage() {
   const queryClient = useQueryClient();
   const [switcherOpen, setSwitcherOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
+
+  const { data: subtracks = [] } = useSubtracks();
+  const getSport = buildSportFromSubtrack(subtracks);
 
   const { data: nextWorkout, isLoading: isWorkoutLoading } = useNextWorkout(
     profile?.sport,
@@ -31,7 +35,7 @@ export default function FeedPage() {
     setIsUpdating(true);
     setSwitcherOpen(false);
     try {
-      const newSport = sportFromSubtrack(subtractId) as Sport;
+      const newSport = getSport(subtractId) as Sport;
       const { error } = await supabase
         .from('profiles')
         .update({ subtrack: subtractId, sport: newSport })
@@ -52,7 +56,7 @@ export default function FeedPage() {
     );
   }
 
-  const currentSportLabel = ALL_SUBTRACKS.find(g => g.sport === profile?.sport)?.label ?? profile?.sport;
+  const currentSportLabel = subtracks.find(g => g.sport === profile?.sport)?.label ?? profile?.sport;
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
@@ -86,12 +90,12 @@ export default function FeedPage() {
               transition={{ duration: 0.18 }}
               className="rounded-2xl border border-white/10 bg-card/80 backdrop-blur overflow-hidden"
             >
-              {ALL_SUBTRACKS.map(({ sport, label, subtracks }) => (
+              {subtracks.map(({ sport, label, subtracks: tracks }) => (
                 <div key={sport}>
                   <p className="px-4 pt-3 pb-1 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                     {label}
                   </p>
-                  {subtracks.map(track => {
+                  {tracks.map(track => {
                     const isActive = profile?.subtrack === track.id;
                     return (
                       <button
