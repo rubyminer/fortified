@@ -20,10 +20,17 @@ export default function AuthPage() {
 
     try {
       if (isSignUp) {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { data, error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
-        toast.success('Account created! Logging you in...');
-        setLocation('/onboarding');
+        if (data.session) {
+          // Email confirmation disabled — session is active immediately
+          toast.success('Account created! Setting up your profile...');
+          setLocation('/onboarding');
+        } else {
+          // Email confirmation required — session not yet available
+          toast.success('Check your email to confirm your account, then sign in.');
+          setIsSignUp(false);
+        }
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;

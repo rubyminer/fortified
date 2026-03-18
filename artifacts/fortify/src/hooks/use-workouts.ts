@@ -22,8 +22,20 @@ export function useNextWorkout(sport?: string, subtrack?: string, userId?: strin
   return useQuery({
     queryKey: ['next-workout', sport, subtrack, userId],
     queryFn: async () => {
-      // Get the most recent completed session for THIS user in this track
-      const { data: sessions } = await supabase
+      // Fetch all available workouts for this track, sorted by week then day
+      const { data: allWorkouts, error: workoutsError } = await supabase
+        .from('workouts')
+        .select('id, week_number, day_number, sport, subtrack, title, coach_note, warmup, main_work, accessory, created_at')
+        .eq('sport', sport)
+        .eq('subtrack', subtrack)
+        .order('week_number', { ascending: true })
+        .order('day_number', { ascending: true });
+
+      if (workoutsError) throw workoutsError;
+      if (!allWorkouts || allWorkouts.length === 0) return null;
+
+      // Get the most recently completed session for this user in this track
+      const { data: lastSessions } = await supabase
         .from('sessions')
         .select('week_number, day_number')
         .eq('user_id', userId)
@@ -33,46 +45,32 @@ export function useNextWorkout(sport?: string, subtrack?: string, userId?: strin
         .order('day_number', { ascending: false })
         .limit(1);
 
-      let targetWeek = 1;
-      let targetDay = 1;
-
-      if (sessions && sessions.length > 0) {
-        const last = sessions[0];
-        // Simplified progression: assumes 4 days per week maximum
-        if (last.day_number >= 4) {
-          targetWeek = last.week_number + 1;
-          targetDay = 1;
-        } else {
-          targetWeek = last.week_number;
-          targetDay = last.day_number + 1;
-        }
+      // If no sessions yet, return the first workout in the track
+      if (!lastSessions || lastSessions.length === 0) {
+        return allWorkouts[0] as Workout;
       }
 
-      const { data: workout, error } = await supabase
-        .from('workouts')
-        .select('*')
-        .eq('sport', sport)
-        .eq('subtrack', subtrack)
-        .eq('week_number', targetWeek)
-        .eq('day_number', targetDay)
-        .single();
+      const last = lastSessions[0];
 
-      if (error && error.code !== 'PGRST116') throw error;
-      
-      // Fallback to W1D1 if we ran out of programming
-      if (!workout) {
-        const { data: fallback } = await supabase
-          .from('workouts')
-          .select('*')
-          .eq('sport', sport)
-          .eq('subtrack', subtrack)
-          .eq('week_number', 1)
-          .eq('day_number', 1)
-          .single();
-        return fallback as Workout;
+      // Find the index of the last completed workout in the available sequence
+      const lastCompletedIdx = allWorkouts.findIndex(
+        w => w.week_number === last.week_number && w.day_number === last.day_number
+      );
+
+      if (lastCompletedIdx === -1) {
+        // Last completed workout not found in templates (maybe deleted) — start from beginning
+        return allWorkouts[0] as Workout;
       }
 
-      return workout as Workout;
+      const nextIdx = lastCompletedIdx + 1;
+
+      if (nextIdx < allWorkouts.length) {
+        // Advance to next workout in sequence
+        return allWorkouts[nextIdx] as Workout;
+      }
+
+      // Completed all workouts in the track — cycle back to beginning
+      return allWorkouts[0] as Workout;
     },
     enabled: !!sport && !!subtrack && !!userId,
   });
