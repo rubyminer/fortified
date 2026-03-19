@@ -209,10 +209,16 @@ function EmptyCell() {
   );
 }
 
+interface DisciplineConfig {
+  cycle_weeks: number;
+  days_max: number;
+}
+
 export function SubtrackVisualizer() {
   const [discipline, setDiscipline] = useState('');
   const [subtrack, setSubtrack] = useState('');
   const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [disciplineConfig, setDisciplineConfig] = useState<DisciplineConfig | null>(null);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Workout | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
@@ -220,7 +226,18 @@ export function SubtrackVisualizer() {
   const subtracks = discipline ? (DISCIPLINE_SUBTRACKS[discipline] ?? []) : [];
 
   useEffect(() => {
-    if (discipline) setSubtrack('');
+    if (discipline) {
+      setSubtrack('');
+      setDisciplineConfig(null);
+      supabase
+        .from('disciplines')
+        .select('cycle_weeks, days_max')
+        .eq('id', discipline)
+        .single()
+        .then(({ data }) => {
+          if (data) setDisciplineConfig(data as DisciplineConfig);
+        });
+    }
   }, [discipline]);
 
   useEffect(() => {
@@ -246,16 +263,14 @@ export function SubtrackVisualizer() {
   }, [discipline, subtrack]);
 
   const { grid, maxWeek, maxDay } = useMemo(() => {
-    if (!workouts.length) return { grid: {}, maxWeek: 0, maxDay: 0 };
     const map: Record<string, Workout> = {};
-    let mw = 0, md = 0;
     for (const w of workouts) {
       map[`${w.week_number}-${w.day_number}`] = w;
-      if (w.week_number > mw) mw = w.week_number;
-      if (w.day_number > md) md = w.day_number;
     }
+    const mw = disciplineConfig?.cycle_weeks ?? Math.max(...workouts.map(w => w.week_number), 0);
+    const md = disciplineConfig?.days_max ?? Math.max(...workouts.map(w => w.day_number), 0);
     return { grid: map, maxWeek: mw, maxDay: md };
-  }, [workouts]);
+  }, [workouts, disciplineConfig]);
 
   const chartData = useMemo(() => {
     return workouts.map(w => ({
@@ -308,9 +323,9 @@ export function SubtrackVisualizer() {
           </select>
         </div>
 
-        {workouts.length > 0 && (
+        {disciplineConfig && (
           <div style={{ marginLeft: 'auto', fontSize: 13, color: '#666', alignSelf: 'flex-end', paddingBottom: 2 }}>
-            {workouts.length} sessions · {maxWeek} week{maxWeek !== 1 ? 's' : ''} · {maxDay} day{maxDay !== 1 ? 's' : ''}/wk
+            {workouts.length}/{maxWeek * maxDay} sessions filled · {maxWeek}-week cycle · {maxDay} days/wk
           </div>
         )}
       </div>
