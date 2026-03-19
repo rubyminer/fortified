@@ -44,7 +44,7 @@ artifacts-monorepo/
 2. Run `supabase/migrations/001_initial.sql` in the Supabase SQL editor
 3. Run `supabase/seed.sql` to populate movements and workouts
 4. Enable Realtime on `chat_messages` and `sessions` tables (Database > Replication)
-5. Create `artifacts/fortify/.env` from `artifacts/fortify/.env.example`:
+5. Create `artifacts/fortify/.env` from `artifacts/fortify/.env.example` (see root `README.md` for full local setup):
    ```
    VITE_SUPABASE_URL=https://your-project-id.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key
@@ -101,7 +101,7 @@ Key dependencies: `@supabase/supabase-js`, `wouter`, `recharts`, `date-fns`
 Setup:
 1. Run `supabase/migrations/002_add_admin.sql` in Supabase SQL editor to add `is_admin` column and admin RLS policies
 2. Grant admin: `update profiles set is_admin = true where id = (select id from auth.users where email = 'your-email@example.com');`
-3. Create `artifacts/fortify-admin/.env` from `.env.example`:
+3. Create `artifacts/fortify-admin/.env` from `artifacts/fortify-admin/.env.example`:
    ```
    VITE_SUPABASE_URL=https://your-project-id.supabase.co
    VITE_SUPABASE_ANON_KEY=your-anon-key
