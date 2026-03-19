@@ -159,7 +159,7 @@ export default function PRsPage() {
                         {i > 0 && (
                           <div className="flex flex-col items-center px-1 shrink-0">
                             {delta !== null && delta > 0 && (
-                              <span className="text-[10px] font-bold text-green-400 leading-none mb-0.5">
+                              <span className="text-[13px] font-bold text-green-400 leading-none mb-0.5">
                                 +{delta}
                               </span>
                             )}
@@ -167,19 +167,17 @@ export default function PRsPage() {
                           </div>
                         )}
 
-                        {/* Weight + date column */}
-                        <div className={`flex flex-col items-center shrink-0 ${isCurrent ? '' : 'opacity-50'}`}>
-                          <div className={`font-display tracking-wide leading-tight ${
-                            isCurrent
-                              ? 'text-2xl text-primary'
-                              : 'text-lg text-white'
+                        {/* Weight + date column — fixed width keeps dates aligned */}
+                        <div className={`flex flex-col items-center shrink-0 min-w-[52px] ${isCurrent ? '' : 'opacity-50'}`}>
+                          <div className={`font-display text-2xl tracking-wide leading-tight ${
+                            isCurrent ? 'text-primary' : 'text-white'
                           }`}>
                             {entry.weight_lbs}
                             {isCurrent && (
                               <span className="text-xs font-sans font-bold text-primary/70 ml-0.5 tracking-widest">LBS</span>
                             )}
                           </div>
-                          <div className="text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap">
+                          <div className="text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap text-center">
                             {format(new Date(entry.achieved_at), 'MMM d')}
                           </div>
                         </div>
