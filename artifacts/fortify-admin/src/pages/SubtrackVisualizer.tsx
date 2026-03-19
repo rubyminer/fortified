@@ -215,6 +215,7 @@ export function SubtrackVisualizer() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Workout | null>(null);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   const subtracks = discipline ? (DISCIPLINE_SUBTRACKS[discipline] ?? []) : [];
 
@@ -223,19 +224,26 @@ export function SubtrackVisualizer() {
   }, [discipline]);
 
   useEffect(() => {
-    if (!subtrack) { setWorkouts([]); return; }
+    if (!subtrack || !discipline) { setWorkouts([]); setFetchError(null); return; }
     setLoading(true);
+    setFetchError(null);
     supabase
       .from('workouts')
       .select('*')
+      .eq('discipline', discipline)
       .eq('subtrack', subtrack)
       .order('week_number')
       .order('day_number')
-      .then(({ data }) => {
-        setWorkouts((data as Workout[]) ?? []);
+      .then(({ data, error }) => {
+        if (error) {
+          setFetchError(error.message);
+          setWorkouts([]);
+        } else {
+          setWorkouts((data as Workout[]) ?? []);
+        }
         setLoading(false);
       });
-  }, [subtrack]);
+  }, [discipline, subtrack]);
 
   const { grid, maxWeek, maxDay } = useMemo(() => {
     if (!workouts.length) return { grid: {}, maxWeek: 0, maxDay: 0 };
@@ -316,6 +324,16 @@ export function SubtrackVisualizer() {
           <div style={{ fontSize: 32, marginBottom: 12 }}>📊</div>
           <div style={{ fontSize: 16, fontWeight: 600, color: '#888', marginBottom: 6 }}>Select a subtrack to visualize</div>
           <div style={{ fontSize: 13, color: '#555' }}>Choose a discipline and subtrack above to see the full training cycle grid and progression charts.</div>
+        </div>
+      )}
+
+      {/* Fetch error */}
+      {fetchError && (
+        <div style={{
+          background: '#2a0f0f', border: '1px solid #7f1d1d', borderRadius: 10,
+          padding: '16px 20px', color: '#f87171', fontSize: 13, marginBottom: 20,
+        }}>
+          Failed to load workouts: {fetchError}
         </div>
       )}
 
