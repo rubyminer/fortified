@@ -16,7 +16,7 @@ export default function PRsPage() {
   const { data: prs, isLoading } = usePRs(user?.id);
   const { data: movements } = useMovements();
   const { mutateAsync: createPR, isPending } = useCreatePR();
-  
+
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     movement: '',
@@ -44,17 +44,22 @@ export default function PRsPage() {
     }
   };
 
-  // Group PRs by movement to show highest/latest
-  const groupedPRs = prs?.reduce((acc, pr) => {
-    if (!acc[pr.movement]) {
-      acc[pr.movement] = pr; // assume sorted by date DESC from hook
-    } else if (pr.weight_lbs > acc[pr.movement].weight_lbs) {
-      acc[pr.movement] = pr; // keep highest weight if multiple exist
-    }
+  // Group all PRs by movement, keep up to last 3 sorted ascending by date
+  const groupedPRs = (prs ?? []).reduce((acc, pr) => {
+    if (!acc[pr.movement]) acc[pr.movement] = [];
+    acc[pr.movement].push(pr);
     return acc;
-  }, {} as Record<string, PersonalRecord>);
+  }, {} as Record<string, PersonalRecord[]>);
 
-  const prList = Object.values(groupedPRs || {}).sort((a, b) => b.weight_lbs - a.weight_lbs);
+  // For each movement: sort ascending by date, take the last 3
+  const prGroups = Object.entries(groupedPRs).map(([movement, records]) => {
+    const sorted = [...records].sort(
+      (a, b) => new Date(a.achieved_at).getTime() - new Date(b.achieved_at).getTime()
+    );
+    const last3 = sorted.slice(-3);
+    const best = Math.max(...last3.map(r => r.weight_lbs));
+    return { movement, entries: last3, best };
+  }).sort((a, b) => b.best - a.best);
 
   return (
     <div className="space-y-6">
@@ -77,10 +82,10 @@ export default function PRsPage() {
             <form onSubmit={handleSubmit} className="space-y-4 pt-4">
               <div className="space-y-2">
                 <label className="text-xs uppercase tracking-widest font-bold text-white/70">Movement</label>
-                <select 
+                <select
                   required
                   value={formData.movement}
-                  onChange={e => setFormData({...formData, movement: e.target.value})}
+                  onChange={e => setFormData({ ...formData, movement: e.target.value })}
                   className="flex h-12 w-full rounded-xl border border-white/10 bg-input/50 px-4 py-2 text-base focus:ring-2 focus:ring-primary outline-none"
                 >
                   <option value="" disabled>Select movement...</option>
@@ -92,29 +97,29 @@ export default function PRsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-xs uppercase tracking-widest font-bold text-white/70">Weight (lbs)</label>
-                  <Input 
-                    type="number" 
-                    required 
+                  <Input
+                    type="number"
+                    required
                     value={formData.weight_lbs}
-                    onChange={e => setFormData({...formData, weight_lbs: e.target.value})}
+                    onChange={e => setFormData({ ...formData, weight_lbs: e.target.value })}
                     placeholder="225"
                   />
                 </div>
                 <div className="space-y-2">
                   <label className="text-xs uppercase tracking-widest font-bold text-white/70">Date</label>
-                  <Input 
-                    type="date" 
-                    required 
+                  <Input
+                    type="date"
+                    required
                     value={formData.achieved_at}
-                    onChange={e => setFormData({...formData, achieved_at: e.target.value})}
+                    onChange={e => setFormData({ ...formData, achieved_at: e.target.value })}
                   />
                 </div>
               </div>
               <div className="space-y-2">
                 <label className="text-xs uppercase tracking-widest font-bold text-white/70">Notes (Optional)</label>
-                <Input 
+                <Input
                   value={formData.notes}
-                  onChange={e => setFormData({...formData, notes: e.target.value})}
+                  onChange={e => setFormData({ ...formData, notes: e.target.value })}
                   placeholder="Felt smooth, no belt"
                 />
               </div>
@@ -128,23 +133,59 @@ export default function PRsPage() {
 
       {isLoading ? (
         <div className="text-center py-10 animate-pulse text-muted-foreground">Loading records...</div>
-      ) : prList.length > 0 ? (
+      ) : prGroups.length > 0 ? (
         <div className="space-y-3">
-          {prList.map((pr) => (
-            <Card key={pr.id} className="bg-card/40 border-white/5 hover:border-white/20 transition-all">
-              <CardContent className="p-4 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Trophy className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-display text-xl text-white">{pr.movement}</h3>
-                    <p className="text-xs text-muted-foreground mt-0.5">{format(new Date(pr.achieved_at), 'MMM d, yyyy')}</p>
-                  </div>
+          {prGroups.map(({ movement, entries, best: _ }) => (
+            <Card key={movement} className="bg-card/40 border-white/5 hover:border-white/20 transition-all">
+              <CardContent className="p-4 flex items-center gap-4">
+                {/* Trophy icon */}
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                  <Trophy className="w-6 h-6 text-primary" />
                 </div>
-                <div className="text-right">
-                  <div className="font-display text-3xl text-accent tracking-wide">{pr.weight_lbs}</div>
-                  <div className="text-[10px] uppercase font-bold text-muted-foreground -mt-1">LBS</div>
+
+                {/* Movement name */}
+                <div className="shrink-0 min-w-[100px]">
+                  <h3 className="font-display text-xl text-white leading-tight">{movement}</h3>
+                </div>
+
+                {/* Progression strip */}
+                <div className="flex items-center gap-1 ml-auto overflow-x-auto">
+                  {entries.map((entry, i) => {
+                    const isCurrent = i === entries.length - 1;
+                    const delta = i > 0 ? entry.weight_lbs - entries[i - 1].weight_lbs : null;
+                    return (
+                      <div key={entry.id} className="flex items-center gap-1">
+                        {/* Delta + arrow between entries */}
+                        {i > 0 && (
+                          <div className="flex flex-col items-center px-1 shrink-0">
+                            {delta !== null && delta > 0 && (
+                              <span className="text-[10px] font-bold text-green-400 leading-none mb-0.5">
+                                +{delta}
+                              </span>
+                            )}
+                            <span className="text-white/30 text-sm leading-none">→</span>
+                          </div>
+                        )}
+
+                        {/* Weight + date column */}
+                        <div className={`flex flex-col items-center shrink-0 ${isCurrent ? '' : 'opacity-50'}`}>
+                          <div className={`font-display tracking-wide leading-tight ${
+                            isCurrent
+                              ? 'text-2xl text-primary'
+                              : 'text-lg text-white'
+                          }`}>
+                            {entry.weight_lbs}
+                            {isCurrent && (
+                              <span className="text-xs font-sans font-bold text-primary/70 ml-0.5 tracking-widest">LBS</span>
+                            )}
+                          </div>
+                          <div className="text-[10px] text-muted-foreground mt-0.5 whitespace-nowrap">
+                            {format(new Date(entry.achieved_at), 'MMM d')}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </CardContent>
             </Card>
