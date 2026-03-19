@@ -8,6 +8,7 @@ const NAV = [
   { path: '/movements', label: 'Movements', icon: '🏋️' },
   { path: '/disciplines', label: 'Disciplines', icon: '🏅' },
   { path: '/subtracks', label: 'Subtracks', icon: '🎯' },
+  { path: '/visualizer', label: 'Visualizer', icon: '📈' },
   { path: '/users', label: 'Users', icon: '👤' },
   { path: '/community', label: 'Community', icon: '💬' },
   { path: '/analytics', label: 'Analytics', icon: '📊' },

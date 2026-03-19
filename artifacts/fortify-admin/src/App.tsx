@@ -10,6 +10,7 @@ import { Subtracks } from '@/pages/Subtracks';
 import { Users } from '@/pages/Users';
 import { Community } from '@/pages/Community';
 import { Analytics } from '@/pages/Analytics';
+import { SubtrackVisualizer } from '@/pages/SubtrackVisualizer';
 
 function AppRoutes() {
   const { session, profile, loading, isAdmin } = useAuth();
@@ -43,6 +44,7 @@ function AppRoutes() {
       <Route path="/users" component={Users} />
       <Route path="/community" component={Community} />
       <Route path="/analytics" component={Analytics} />
+      <Route path="/visualizer" component={SubtrackVisualizer} />
       <Route>
         <div style={{ padding: 40, color: '#888' }}>Page not found</div>
       </Route>
