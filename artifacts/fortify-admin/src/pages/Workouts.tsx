@@ -108,6 +108,22 @@ export function Workouts() {
     setDrawerOpen(true);
   }
 
+  function duplicateWorkout(w: Workout) {
+    setEditId(null);
+    setForm({
+      discipline: w.discipline,
+      subtrack: w.subtrack,
+      week_number: w.week_number + 1,
+      day_number: w.day_number,
+      title: w.title,
+      coach_note: w.coach_note ?? '',
+      warmup: (w.warmup ?? []).concat(''),
+      main_work: (w.main_work ?? []).length ? [...(w.main_work ?? [])] : [emptyExercise()],
+      accessory: [...(w.accessory ?? [])],
+    });
+    setDrawerOpen(true);
+  }
+
   async function save() {
     if (!form.title.trim()) { showToast('Title is required', 'error'); return; }
     setSaving(true);
@@ -194,9 +210,19 @@ export function Workouts() {
                   <td>D{w.day_number}</td>
                   <td style={{ fontWeight: 500 }}>{w.title}</td>
                   <td style={{ color: '#888', fontSize: 12 }}>{shortDate(w.created_at)}</td>
+                  <td style={{ width: 40, padding: '0 8px' }}>
+                    <button
+                      className="btn btn-ghost btn-icon"
+                      title={`Duplicate → Week ${w.week_number + 1}`}
+                      style={{ fontSize: 15, color: '#666', opacity: 0.7 }}
+                      onClick={e => { e.stopPropagation(); duplicateWorkout(w); }}
+                    >
+                      ⧉
+                    </button>
+                  </td>
                 </tr>
               ))}
-              {filtered.length === 0 && <tr><td colSpan={6} style={{ color: '#555', textAlign: 'center', padding: 32 }}>No workouts found</td></tr>}
+              {filtered.length === 0 && <tr><td colSpan={7} style={{ color: '#555', textAlign: 'center', padding: 32 }}>No workouts found</td></tr>}
             </tbody>
           </table>
         )}
@@ -209,6 +235,18 @@ export function Workouts() {
         footer={<>
           <button className="btn btn-secondary" onClick={() => setDrawerOpen(false)}>Cancel</button>
           {editId && <button className="btn btn-destructive" onClick={() => setConfirmDelete(true)}>Delete</button>}
+          {editId && (
+            <button
+              className="btn btn-secondary"
+              title="Duplicate to next week"
+              onClick={() => {
+                const src = rows.find(r => r.id === editId);
+                if (src) duplicateWorkout(src);
+              }}
+            >
+              ⧉ Duplicate
+            </button>
+          )}
           <button className="btn btn-primary" onClick={save} disabled={saving}>{saving ? 'Saving…' : 'Save Workout'}</button>
         </>}
       >
