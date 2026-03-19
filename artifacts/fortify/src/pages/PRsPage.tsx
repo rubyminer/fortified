@@ -57,9 +57,9 @@ export default function PRsPage() {
       (a, b) => new Date(a.achieved_at).getTime() - new Date(b.achieved_at).getTime()
     );
     const last3 = sorted.slice(-3);
-    const best = Math.max(...last3.map(r => r.weight_lbs));
-    return { movement, entries: last3, best };
-  }).sort((a, b) => b.best - a.best);
+    const currentBest = last3[last3.length - 1].weight_lbs;
+    return { movement, entries: last3, currentBest };
+  }).sort((a, b) => b.currentBest - a.currentBest);
 
   return (
     <div className="space-y-6">
@@ -135,7 +135,7 @@ export default function PRsPage() {
         <div className="text-center py-10 animate-pulse text-muted-foreground">Loading records...</div>
       ) : prGroups.length > 0 ? (
         <div className="space-y-3">
-          {prGroups.map(({ movement, entries, best: _ }) => (
+          {prGroups.map(({ movement, entries }) => (
             <Card key={movement} className="bg-card/40 border-white/5 hover:border-white/20 transition-all">
               <CardContent className="p-4 flex items-center gap-4">
                 {/* Trophy icon */}
