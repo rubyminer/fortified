@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useRecentSessions } from '@/hooks/use-workouts';
 import { useSubtracks } from '@/hooks/use-subtracks';
@@ -8,6 +8,8 @@ import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { LogOut, User as UserIcon, Calendar, Award, CheckCircle2 } from 'lucide-react';
 
@@ -28,6 +30,32 @@ export default function ProfilePage() {
   const { data: subtracks = [] } = useSubtracks();
   const { data: subConfig } = useSubtrackConfig(profile?.discipline, profile?.subtrack);
   const [saving, setSaving] = useState(false);
+  const [notifyDayBefore, setNotifyDayBefore] = useState(true);
+  const [notifyHourBefore, setNotifyHourBefore] = useState(true);
+  const [prefTime, setPrefTime] = useState('07:00');
+
+  useEffect(() => {
+    if (!profile) return;
+    setNotifyDayBefore(profile.notify_day_before !== false);
+    setNotifyHourBefore(profile.notify_hour_before !== false);
+    const t = profile.preferred_workout_time;
+    if (t && t.length >= 5) setPrefTime(t.slice(0, 5));
+  }, [profile?.id, profile?.notify_day_before, profile?.notify_hour_before, profile?.preferred_workout_time]);
+
+  async function saveNotificationPrefs(partial: Record<string, unknown>, quiet?: boolean) {
+    if (!profile) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase.from('profiles').update(partial).eq('id', profile.id);
+      if (error) throw error;
+      await refreshProfile();
+      if (!quiet) toast.success('Saved');
+    } catch {
+      toast.error('Could not save settings');
+    } finally {
+      setSaving(false);
+    }
+  }
 
   const formatSubtrack = (str: string) =>
     str?.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
@@ -110,6 +138,63 @@ export default function ProfilePage() {
             <Award className="w-6 h-6 text-accent mb-2" />
             <div className="text-2xl font-display text-white capitalize">{profile?.level}</div>
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold mt-1">Status</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Notifications */}
+      <div className="space-y-3">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-muted-foreground px-1">Notifications</h2>
+        <Card className="bg-card/40 border-white/5">
+          <CardContent className="p-4 space-y-4">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-white">Day-before reminders</p>
+                <p className="text-xs text-muted-foreground">8:00 PM evening before a session</p>
+              </div>
+              <Switch
+                checked={notifyDayBefore}
+                onCheckedChange={v => {
+                  setNotifyDayBefore(v);
+                  void saveNotificationPrefs({ notify_day_before: v }, true);
+                }}
+                disabled={saving}
+              />
+            </div>
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-medium text-white">Hour-before reminders</p>
+                <p className="text-xs text-muted-foreground">One hour before your usual workout time</p>
+              </div>
+              <Switch
+                checked={notifyHourBefore}
+                onCheckedChange={v => {
+                  setNotifyHourBefore(v);
+                  void saveNotificationPrefs({ notify_hour_before: v }, true);
+                }}
+                disabled={saving}
+              />
+            </div>
+            <div className="space-y-2 pt-2 border-t border-white/5">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                Preferred workout time
+              </label>
+              <Input
+                type="time"
+                value={prefTime}
+                onChange={e => setPrefTime(e.target.value)}
+                onBlur={() => {
+                  if (!profile || prefTime.length < 4) return;
+                  const pg = prefTime.length === 5 ? `${prefTime}:00` : prefTime;
+                  void saveNotificationPrefs({ preferred_workout_time: pg });
+                }}
+                disabled={saving}
+                className="h-11"
+              />
+            </div>
+            <p className="text-[11px] text-muted-foreground">
+              Enable reminders in your browser when prompted. Push delivery uses your account subscriptions.
+            </p>
           </CardContent>
         </Card>
       </div>

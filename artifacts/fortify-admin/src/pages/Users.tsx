@@ -5,7 +5,7 @@ import { Drawer } from '@/components/Drawer';
 import { SkeletonTable } from '@/components/Skeleton';
 import { useToast } from '@/components/Toast';
 import { DISCIPLINE_SUBTRACKS, subtrackLabel, relativeTime, shortDate } from '@/lib/utils';
-import type { Profile, Session, PersonalRecord } from '@/lib/types';
+import type { Profile, Session, PersonalRecord, ScheduledSession } from '@/lib/types';
 
 const DISCIPLINES = ['crossfit', 'hyrox', 'athx'];
 
@@ -30,6 +30,7 @@ export function Users() {
   const [trackSubtrack, setTrackSubtrack] = useState('');
   const [updatingTrack, setUpdatingTrack] = useState(false);
   const [updatingAdmin, setUpdatingAdmin] = useState(false);
+  const [scheduled, setScheduled] = useState<ScheduledSession[]>([]);
 
   const fetch = useCallback(async () => {
     setLoading(true);
@@ -54,12 +55,18 @@ export function Users() {
     setTrackSubtrack(u.subtrack);
     setShowAllSessions(false);
     setDetailLoading(true);
-    const [sessRes, prRes] = await Promise.all([
+    const [sessRes, prRes, calRes] = await Promise.all([
       supabase.from('sessions').select('*').eq('user_id', u.id).order('completed_at', { ascending: false }),
       supabase.from('personal_records').select('*').eq('user_id', u.id).order('achieved_at', { ascending: false }),
+      supabase
+        .from('scheduled_sessions')
+        .select('*, workouts(title)')
+        .eq('user_id', u.id)
+        .order('scheduled_date', { ascending: false }),
     ]);
     setSessions((sessRes.data ?? []) as Session[]);
     setPrs((prRes.data ?? []) as PersonalRecord[]);
+    setScheduled((calRes.data ?? []) as ScheduledSession[]);
     setDetailLoading(false);
   }
 
@@ -94,6 +101,14 @@ export function Users() {
   const trackSubtracks = DISCIPLINE_SUBTRACKS[trackDiscipline] ?? [];
 
   const displayedSessions = showAllSessions ? sessions : sessions.slice(0, 20);
+
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const calScheduled = scheduled.length;
+  const calCompleted = scheduled.filter(s => s.completed).length;
+  const calFlexConfirmed = scheduled.filter(s => s.is_flex_day && s.is_confirmed).length;
+  const calFlexSkipped = scheduled.filter(
+    s => s.is_flex_day && !s.is_confirmed && s.scheduled_date < todayStr,
+  ).length;
 
   return (
     <Layout section="Users">
@@ -186,6 +201,42 @@ export function Users() {
             </div>
 
             {detailLoading ? <div style={{ padding: 20, textAlign: 'center', color: '#555' }}>Loading…</div> : <>
+              <div className="section-divider" style={{ marginTop: 20 }}>Calendar</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 12, fontSize: 12 }}>
+                <div style={{ background: '#111', padding: 8, borderRadius: 6, textAlign: 'center' }}>
+                  <div style={{ color: '#888' }}>Scheduled</div>
+                  <div style={{ fontWeight: 700, color: '#f0f0f0' }}>{calScheduled}</div>
+                </div>
+                <div style={{ background: '#111', padding: 8, borderRadius: 6, textAlign: 'center' }}>
+                  <div style={{ color: '#888' }}>Completed</div>
+                  <div style={{ fontWeight: 700, color: '#22c55e' }}>{calCompleted}</div>
+                </div>
+                <div style={{ background: '#111', padding: 8, borderRadius: 6, textAlign: 'center' }}>
+                  <div style={{ color: '#888' }}>Flex ✓</div>
+                  <div style={{ fontWeight: 700, color: '#F05A28' }}>{calFlexConfirmed}</div>
+                </div>
+                <div style={{ background: '#111', padding: 8, borderRadius: 6, textAlign: 'center' }}>
+                  <div style={{ color: '#888' }}>Flex skipped</div>
+                  <div style={{ fontWeight: 700, color: '#888' }}>{calFlexSkipped}</div>
+                </div>
+              </div>
+              <table className="data-table" style={{ marginBottom: 20 }}>
+                <thead><tr><th>Date</th><th>Workout</th><th>Type</th><th>Confirmed</th><th>Done</th><th>Rescheduled</th></tr></thead>
+                <tbody>
+                  {scheduled.slice(0, 40).map(s => (
+                    <tr key={s.id}>
+                      <td style={{ fontSize: 12, color: '#888' }}>{s.scheduled_date}</td>
+                      <td style={{ fontSize: 12 }}>{s.workouts?.title ?? '—'}</td>
+                      <td style={{ fontSize: 11, color: '#888' }}>{s.is_flex_day ? 'Flex' : 'Base'}</td>
+                      <td style={{ fontSize: 11 }}>{s.is_confirmed ? 'Yes' : 'No'}</td>
+                      <td style={{ fontSize: 11 }}>{s.completed ? 'Yes' : 'No'}</td>
+                      <td style={{ fontSize: 11, color: '#888' }}>{s.rescheduled_from ?? '—'}</td>
+                    </tr>
+                  ))}
+                  {scheduled.length === 0 && <tr><td colSpan={6} style={{ color: '#555', textAlign: 'center', padding: 16 }}>No scheduled sessions</td></tr>}
+                </tbody>
+              </table>
+
               <div className="section-divider" style={{ marginTop: 20 }}>Session History ({sessions.length})</div>
               <table className="data-table">
                 <thead><tr><th>Date</th><th>Discipline</th><th>Week/Day</th></tr></thead>

@@ -10,6 +10,8 @@ import { ALL_SUBTRACKS } from '@/lib/subtracks';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { populateCalendar } from '@/lib/populate-calendar';
 import { ArrowLeft, Clock, Dumbbell, Target, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -45,15 +47,39 @@ export default function SubtrackPreviewPage() {
     if (!profile || isCurrent) { setLocation('/'); return; }
     setConfirming(true);
     try {
+      const cycleStart = new Date();
+      const cycleStr = format(cycleStart, 'yyyy-MM-dd');
+      const newDiscipline = getDiscipline(id);
       const { error } = await supabase
         .from('profiles')
-        .update({ subtrack: id, discipline: getDiscipline(id) })
+        .update({
+          subtrack: id,
+          discipline: newDiscipline,
+          cycle_start_date: cycleStr,
+        })
         .eq('id', profile.id);
       if (error) throw error;
+      const pref = profile.preferred_workout_time ?? '07:00:00';
+      const prefShort = pref.length >= 8 ? pref.slice(0, 5) : pref;
+      const pop = await populateCalendar(supabase, {
+        userId: profile.id,
+        discipline: newDiscipline,
+        subtrack: id,
+        supplementalDays: profile.supplemental_days ?? [],
+        preferredWorkoutTime: prefShort,
+        cycleStartDate: cycleStart,
+        replaceFutureIncomplete: true,
+      });
+      if ('error' in pop) {
+        toast.error(pop.error);
+        throw new Error(pop.error);
+      }
       await refreshProfile();
       queryClient.invalidateQueries({ queryKey: ['next-workout'] });
+      queryClient.invalidateQueries({ queryKey: ['scheduled-sessions-range'] });
+      queryClient.invalidateQueries({ queryKey: ['program-summary'] });
       toast.success(`Switched to ${subtrackInfo?.name ?? id}`);
-      setLocation('/');
+      setLocation('/feed');
     } catch (err) {
       toast.error('Failed to switch track. Try again.');
       setConfirming(false);

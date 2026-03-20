@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'wouter';
-import { Dumbbell, Home, MessageCircle, Trophy, User } from 'lucide-react';
+import { CalendarDays, Dumbbell, Home, MessageCircle, Trophy, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 
@@ -9,6 +9,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { icon: Home, label: 'Feed', path: '/feed' },
+    { icon: CalendarDays, label: 'Program', path: '/program' },
     { icon: Dumbbell, label: 'Library', path: '/movements' },
     { icon: Trophy, label: 'PRs', path: '/prs' },
     { icon: MessageCircle, label: 'Chat', path: '/chat' },

@@ -10,6 +10,31 @@ export interface Profile {
   is_beta: boolean;
   is_admin: boolean;
   created_at: string;
+  primary_training_days?: string[] | null;
+  supplemental_timing?: string | null;
+  supplemental_days?: string[] | null;
+  preferred_workout_time?: string | null;
+  cycle_start_date?: string | null;
+  notify_day_before?: boolean | null;
+  notify_hour_before?: boolean | null;
+  notification_timezone?: string | null;
+}
+
+export interface ScheduledSession {
+  id: string;
+  user_id: string;
+  workout_id: string;
+  scheduled_date: string;
+  preferred_time: string | null;
+  is_flex_day: boolean;
+  is_confirmed: boolean;
+  completed: boolean;
+  completed_session_id: string | null;
+  notification_day_before_sent: boolean;
+  notification_hour_before_sent: boolean;
+  rescheduled_from: string | null;
+  created_at: string;
+  workouts?: { title: string } | null;
 }
 
 export interface Session {

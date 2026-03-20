@@ -2,7 +2,7 @@
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Fortify is a mobile-first PWA for functional athletes (CrossFit, Hyrox, ATHX) built with React + Vite + Tailwind + Supabase. No backend — all persistence via Supabase directly from the frontend.
+pnpm workspace monorepo using TypeScript. Fortify is a mobile-first PWA for functional athletes (CrossFit, Hyrox, ATHX) built with React + Vite + Tailwind + Supabase. Product apps talk to Supabase directly; the **backend** package (`artifacts/api-server`, Express) is for scheduled jobs (e.g. push), secured APIs, and future server-side work — see `docs/calendaring-plan.md`.
 
 ## Stack
 
@@ -10,7 +10,7 @@ pnpm workspace monorepo using TypeScript. Fortify is a mobile-first PWA for func
 - **Node.js version**: 24
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
-- **API framework**: Express 5 (api-server, not used by Fortify)
+- **API framework**: Express 5 (**backend** / `artifacts/api-server`; not required for basic Fortify CRUD)
 - **Database**: Supabase (external) — not Replit's built-in DB
 - **Validation**: Zod (`zod/v4`), `drizzle-zod`
 - **API codegen**: Orval (from OpenAPI spec)
@@ -21,7 +21,7 @@ pnpm workspace monorepo using TypeScript. Fortify is a mobile-first PWA for func
 ```text
 artifacts-monorepo/
 ├── artifacts/              # Deployable applications
-│   ├── api-server/         # Express API server (not used by Fortify)
+│   ├── api-server/         # Backend — Express (cron, push, secured APIs)
 │   └── fortify/            # Fortify PWA — React + Vite + Supabase
 ├── lib/                    # Shared libraries
 │   ├── api-spec/           # OpenAPI spec + Orval codegen config

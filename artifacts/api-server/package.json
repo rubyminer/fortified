@@ -9,15 +9,21 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@workspace/db": "workspace:*",
+    "@supabase/supabase-js": "^2.99.2",
     "@workspace/api-zod": "workspace:*",
+    "@workspace/db": "workspace:*",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2",
+    "date-fns": "^3.6.0",
+    "date-fns-tz": "^3.2.0",
     "drizzle-orm": "catalog:",
     "express": "^5",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2"
+    "node-cron": "^3.0.3",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@types/web-push": "^3.6.4",
     "@types/express": "^5.0.6",
     "@types/cors": "^2.8.19",
     "@types/cookie-parser": "^1.4.10",

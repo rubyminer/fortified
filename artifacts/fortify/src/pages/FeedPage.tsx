@@ -5,13 +5,18 @@ import {
   useNextWorkout,
   useRecentSessions,
 } from '@/hooks/use-workouts';
-import { FeedCycleSection } from '@/components/FeedCycleSection';
+import {
+  useHasActiveCalendar,
+  useTodayBaseScheduled,
+  useTodayFlexScheduled,
+  useProgramSummary,
+} from '@/hooks/use-scheduled-sessions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link, useLocation } from 'wouter';
 import { format } from 'date-fns';
-import { Flame, Target, CheckCircle2, ChevronRight, ChevronDown } from 'lucide-react';
+import { Flame, Target, CheckCircle2, ChevronRight, ChevronDown, CalendarDays } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { SessionWithWorkout } from '@/lib/types';
 import { subtrackLabel } from '@/lib/subtracks';
@@ -24,25 +29,44 @@ export default function FeedPage() {
 
   const { data: subtracks = [] } = useSubtracks();
 
-  const { data: nextWorkout, isLoading: isWorkoutLoading } = useNextWorkout(
+  const hasCal = useHasActiveCalendar(profile);
+  const { data: todayBaseRow, isLoading: loadTodayBase } = useTodayBaseScheduled(
+    profile?.id,
     profile?.discipline,
     profile?.subtrack,
-    profile?.id
+    hasCal,
+  );
+  const { data: todayFlexRow, isLoading: loadTodayFlex } = useTodayFlexScheduled(
+    profile?.id,
+    profile?.discipline,
+    profile?.subtrack,
+    hasCal,
+  );
+  const { data: seqNext, isLoading: loadSeq } = useNextWorkout(
+    profile?.discipline,
+    profile?.subtrack,
+    profile?.id,
+    !hasCal,
   );
   const { data: recentSessions, isLoading: isSessionsLoading } = useRecentSessions(profile?.id);
 
-  const { data: flexWorkout } = useFlexWorkoutForWeek(
+  const nextWorkout = hasCal ? todayBaseRow?.workouts ?? null : seqNext;
+  const { data: programSummary } = useProgramSummary(profile?.id, profile?.discipline, profile?.subtrack);
+
+  const { data: flexWorkoutWeek } = useFlexWorkoutForWeek(
     profile?.discipline,
     profile?.subtrack,
-    nextWorkout?.week_number,
+    seqNext?.week_number,
     profile?.id,
   );
+  const flexWorkout = hasCal ? todayFlexRow?.workouts ?? null : flexWorkoutWeek;
 
   function handleSelectSubtrack(id: string) {
     setSwitcherOpen(false);
     setLocation(`/subtrack/${id}`);
   }
 
+  const isWorkoutLoading = hasCal ? loadTodayBase || loadTodayFlex : loadSeq;
   if (isWorkoutLoading || isSessionsLoading) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -116,7 +140,18 @@ export default function FeedPage() {
           <Target className="w-5 h-5 text-primary" /> Up Next
         </h3>
 
-        {nextWorkout ? (
+        {hasCal && !nextWorkout ? (
+          <Card className="border-dashed border-white/20">
+            <CardContent className="p-8 text-center space-y-3">
+              <p className="text-muted-foreground">Rest day — no strength session on your calendar today.</p>
+              <Link href="/program">
+                <Button variant="outline" size="sm">
+                  View program <CalendarDays className="w-4 h-4 ml-2 inline" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        ) : nextWorkout ? (
           <Card className="border-primary/30 box-glow overflow-hidden relative">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/20 blur-3xl rounded-full -mr-10 -mt-10" />
             <CardHeader className="pb-2 relative z-10">
@@ -147,7 +182,9 @@ export default function FeedPage() {
         ) : (
           <Card className="border-dashed border-white/20">
             <CardContent className="p-8 text-center">
-              <p className="text-muted-foreground">Programming complete for this track!</p>
+              <p className="text-muted-foreground">
+                {hasCal ? 'No session today.' : 'Programming complete for this track!'}
+              </p>
             </CardContent>
           </Card>
         )}
@@ -181,7 +218,26 @@ export default function FeedPage() {
         )}
       </section>
 
-      {profile && <FeedCycleSection profile={profile} />}
+      {profile && hasCal && (
+        <Link href="/program">
+          <Card className="border-white/10 bg-card/50 hover:border-primary/30 transition-colors cursor-pointer">
+            <CardContent className="p-4 flex items-center justify-between gap-3">
+              <div>
+                <h3 className="font-display text-lg text-white flex items-center gap-2">
+                  <CalendarDays className="w-5 h-5 text-primary" />
+                  Program
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {programSummary
+                    ? `${programSummary.completed} completed · ${programSummary.planned} scheduled — tap for calendar`
+                    : 'Open your training calendar'}
+                </p>
+              </div>
+              <ChevronRight className="w-5 h-5 text-muted-foreground shrink-0" />
+            </CardContent>
+          </Card>
+        </Link>
+      )}
 
       {/* Stats */}
       <section className="grid grid-cols-2 gap-4">

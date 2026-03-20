@@ -67,7 +67,7 @@ export default function WorkoutDetailPage() {
         sets: loggedSets
       });
       toast.success('Session completed and saved!');
-      setLocation('/');
+      setLocation('/feed');
     } catch {
       toast.error('Failed to save session');
     }

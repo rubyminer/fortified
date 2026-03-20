@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Workout, Session, SetLog } from '@/lib/types';
@@ -18,7 +19,12 @@ export function useWorkout(id: string) {
   });
 }
 
-export function useNextWorkout(discipline?: string, subtrack?: string, userId?: string) {
+export function useNextWorkout(
+  discipline?: string,
+  subtrack?: string,
+  userId?: string,
+  enabled = true,
+) {
   return useQuery({
     queryKey: ['next-workout', discipline, subtrack, userId],
     queryFn: async () => {
@@ -78,7 +84,7 @@ export function useNextWorkout(discipline?: string, subtrack?: string, userId?: 
       // Completed all workouts in the track — cycle back to beginning
       return allWorkouts[0] as Workout;
     },
-    enabled: !!discipline && !!subtrack && !!userId,
+    enabled: !!discipline && !!subtrack && !!userId && enabled,
   });
 }
 
@@ -124,6 +130,20 @@ export function useCompleteWorkout() {
           
         if (setsError) throw setsError;
       }
+
+      const todayStr = format(new Date(), 'yyyy-MM-dd');
+      if (session.user_id && session.workout_id) {
+        await supabase
+          .from('scheduled_sessions')
+          .update({
+            completed: true,
+            completed_session_id: sessionData.id,
+          })
+          .eq('user_id', session.user_id)
+          .eq('workout_id', session.workout_id)
+          .eq('scheduled_date', todayStr)
+          .eq('completed', false);
+      }
       
       return sessionData;
     },
@@ -133,6 +153,11 @@ export function useCompleteWorkout() {
       queryClient.invalidateQueries({ queryKey: ['flex-workout-week'] });
       queryClient.invalidateQueries({ queryKey: ['completed-workout-ids'] });
       queryClient.invalidateQueries({ queryKey: ['track-workouts-all'] });
+      queryClient.invalidateQueries({ queryKey: ['scheduled-sessions-range'] });
+      queryClient.invalidateQueries({ queryKey: ['scheduled-today-base'] });
+      queryClient.invalidateQueries({ queryKey: ['scheduled-today-flex'] });
+      queryClient.invalidateQueries({ queryKey: ['scheduled-upcoming'] });
+      queryClient.invalidateQueries({ queryKey: ['program-summary'] });
     },
   });
 }
