@@ -136,69 +136,163 @@ insert into workouts (id, discipline, subtrack, week_number, day_number, title, 
 '[{"movement_id":"weighted_pullup","name":"Weighted Pull-Up","sets":3,"reps":"5","rpe_target":7.5,"rest_seconds":120,"description":"Dead hang start. Pull explosively — this is a power day so the concentric should be as fast as possible. Control the descent."},{"movement_id":"face_pull","name":"Face Pull","sets":3,"reps":"15","rpe_target":5.5,"rest_seconds":60,"description":"Shoulder health work. External rotation at end range. Light load, high control."}]'::jsonb),
 
 -- Hyrox / Running Economy
-('hyrox_run_w1d1','hyrox','running_economy',1,1,'Running Economy — Single-Leg Foundation',
+('hyrox_run_w1d1','hyrox','running_economy_strength',1,1,'Running Economy — Single-Leg Foundation',
 'Running economy training starts with single-leg stability and posterior chain strength. The goal is building the hip and hamstring durability that keeps your form together in the second half of a race.',
 '["3 min easy jog","2x8 single-leg glute bridge each side","2x10 calf raise","2x8 step-up bodyweight","Hip flexor stretch 60 seconds each side"]'::jsonb,
 '[{"movement_id":"single_leg_rdl","name":"Single-Leg RDL","sets":4,"reps":"8 each leg","rpe_target":7,"rest_seconds":120,"description":"Hip hinge on standing leg. Hips absolutely square. This movement builds the hamstring and hip stability that directly transfers to running form under fatigue."},{"movement_id":"bulgarian_split_squat","name":"Bulgarian Split Squat","sets":3,"reps":"8 each leg","rpe_target":7,"rest_seconds":120,"description":"Rear foot elevated. Full range. This trains the hip extension and quad strength needed for powerful running strides."},{"movement_id":"calf_raise","name":"Calf Raise","sets":4,"reps":"15","rpe_target":6,"rest_seconds":60,"description":"Full range of motion with 1-second pause at top. Ankle stiffness and calf endurance are critical for running economy."}]'::jsonb,
 '[{"movement_id":"nordic_hamstring_curl","name":"Nordic Hamstring Curl","sets":3,"reps":"4","rpe_target":7,"rest_seconds":120,"description":"As slow as possible on the way down. This builds eccentric hamstring strength that protects against strains and supports running power."},{"movement_id":"pallof_press","name":"Pallof Press","sets":3,"reps":"10 each side","rpe_target":6,"rest_seconds":60,"description":"Anti-rotation core stability that directly transfers to maintaining posture and efficiency while running under fatigue."}]'::jsonb),
 
-('hyrox_run_w1d2','hyrox','running_economy',1,2,'Running Economy — Hip Drive and Carry',
+('hyrox_run_w1d2','hyrox','running_economy_strength',1,2,'Running Economy — Hip Drive and Carry',
 'Day 2 shifts to hip drive and loaded carry — the patterns most directly linked to running pace maintenance and the Hyrox farmer carry station.',
 '["3 min easy row or bike","2x10 glute bridges","2x10 banded pull-apart","Ankle circles 20 each direction"]'::jsonb,
 '[{"movement_id":"romanian_deadlift","name":"Romanian Deadlift","sets":4,"reps":"8","rpe_target":7,"rest_seconds":150,"description":"Push hips back to a deep hamstring stretch. This trains the same hip hinge pattern used in running propulsion. Bar close to legs throughout."},{"movement_id":"step_up","name":"Step-Up","sets":4,"reps":"10 each leg","rpe_target":7,"rest_seconds":120,"description":"Box at knee height. Drive through the front heel only — no push-off from the back foot. Builds the single-leg quad and glute strength for uphill and carrying sections."},{"movement_id":"hip_thrust","name":"Hip Thrust","sets":3,"reps":"12","rpe_target":6.5,"rest_seconds":90,"description":"Full hip extension and glute squeeze at top. Builds the posterior power that drives the running stride."}]'::jsonb,
 '[{"movement_id":"farmer_carry","name":"Farmer Carry","sets":4,"reps":"30 meters","rpe_target":7,"rest_seconds":90,"description":"Stand tall. Short powerful steps. Heavy enough to be challenging but light enough to maintain perfect posture for the full distance."},{"movement_id":"suitcase_carry","name":"Suitcase Carry","sets":3,"reps":"20 meters each side","rpe_target":7,"rest_seconds":60,"description":"Resist lateral lean throughout. Builds core stability that supports upright running form."}]'::jsonb),
 
 -- Hyrox / Upper Body Push
-('hyrox_push_w1d1','hyrox','upper_body_push',1,1,'Upper Body Push — Horizontal Press Foundation',
+('hyrox_push_w1d1','hyrox','station_specific_strength',1,1,'Upper Body Push — Horizontal Press Foundation',
 'Hyrox athletes often neglect horizontal pressing strength. This track builds the shoulder, chest, and tricep resilience needed for the SkiErg, wall balls, and carry lockout positions.',
 '["3 min easy row","2x10 banded pull-apart","2x8 push-up with pause at bottom","Thoracic extension over foam roller 60 seconds"]'::jsonb,
 '[{"movement_id":"bench_press","name":"Bench Press","sets":4,"reps":"6","rpe_target":7,"rest_seconds":180,"description":"Feet flat. Slight arch. Bar to low chest. This builds the horizontal pressing foundation that transfers to all overhead and pushing demands in Hyrox."},{"movement_id":"floor_press","name":"Floor Press","sets":3,"reps":"8","rpe_target":7,"rest_seconds":150,"description":"Elbows rest on floor between reps. No leg drive. Builds tricep lockout strength for pressing endurance."},{"movement_id":"db_bench_press","name":"Dumbbell Bench Press","sets":3,"reps":"10","rpe_target":6.5,"rest_seconds":120,"description":"Greater range of motion than barbell. Addresses imbalances between sides. Control the stretch at bottom."}]'::jsonb,
 '[{"movement_id":"face_pull","name":"Face Pull","sets":4,"reps":"15","rpe_target":5.5,"rest_seconds":60,"description":"Shoulder health work to balance pressing volume. Pull to face level with external rotation. Light load, high control."},{"movement_id":"banded_pull_apart","name":"Banded Pull-Apart","sets":3,"reps":"20","rpe_target":5,"rest_seconds":45,"description":"Arms straight. Slow and controlled. Activates rear delts and rhomboids to protect the shoulder from pressing overuse."}]'::jsonb),
 
-('hyrox_push_w1d2','hyrox','upper_body_push',1,2,'Upper Body Push — Vertical Press and Pull Balance',
+('hyrox_push_w1d2','hyrox','station_specific_strength',1,2,'Upper Body Push — Vertical Press and Pull Balance',
 'Day 2 introduces vertical pressing and balances it with heavy vertical pulling. SkiErg athletes benefit directly from the lat and shoulder work here.',
 '["3 min easy ski erg or row","2x10 banded pull-apart overhead","2x8 empty bar strict press","Dead hang 30 seconds","Lat stretch 60 seconds each side"]'::jsonb,
 '[{"movement_id":"strict_press","name":"Strict Press","sets":4,"reps":"6","rpe_target":7,"rest_seconds":180,"description":"Bar starts at collarbone. Squeeze glutes hard. Full lockout with ears through arms. No leg drive — this is pure shoulder strength."},{"movement_id":"push_press","name":"Push Press","sets":3,"reps":"5","rpe_target":7.5,"rest_seconds":150,"description":"Shallow fast dip then drive legs then press. Lockout overhead. Heavier than strict press — builds the pressing power needed for wall balls and shoulder to overhead."},{"movement_id":"weighted_pullup","name":"Weighted Pull-Up","sets":4,"reps":"4","rpe_target":7.5,"rest_seconds":150,"description":"Dead hang start. Full range of motion. Balances the pressing volume and builds the lat and bicep strength that supports SkiErg mechanics."}]'::jsonb,
 '[{"movement_id":"pullover","name":"Dumbbell Pullover","sets":3,"reps":"12","rpe_target":6,"rest_seconds":90,"description":"Directly targets the lat engagement pattern used on the SkiErg. Full overhead stretch. Pull through the lats not the arms."},{"movement_id":"face_pull","name":"Face Pull","sets":3,"reps":"15","rpe_target":5.5,"rest_seconds":60,"description":"Shoulder health. Pull to face with external rotation at end range."}]'::jsonb),
 
 -- CrossFit / Engine Builder
-('cf_engine_w1d1','crossfit','engine_builder',1,1,'Engine Builder — Lower Body Strength Base',
+('cf_engine_w1d1','crossfit','muscular_endurance',1,1,'Engine Builder — Lower Body Strength Base',
 'The engine builder track bridges CrossFit strength and aerobic capacity. Day 1 builds the lower body strength base that makes your legs survive long MetCon efforts and barbell cycling.',
 '["3 min easy row or bike","2x10 goblet squat bodyweight","2x10 glute bridges","2x10 banded pull-apart","Hip 90/90 stretch 60 seconds each side"]'::jsonb,
 '[{"movement_id":"back_squat","name":"Back Squat","sets":4,"reps":"5","rpe_target":7,"rest_seconds":180,"description":"The primary strength-endurance builder for CrossFit. Breaking parallel every rep. Drive the floor away on ascent. This builds the leg strength that prevents quad fatigue during WODs."},{"movement_id":"front_squat","name":"Front Squat","sets":3,"reps":"4","rpe_target":7,"rest_seconds":180,"description":"Elbows high. Torso vertical. Directly transfers to the clean and thruster. Builds the positional strength needed for barbell cycling."},{"movement_id":"romanian_deadlift","name":"Romanian Deadlift","sets":3,"reps":"8","rpe_target":6.5,"rest_seconds":150,"description":"Hamstring and glute endurance accessory. Push hips back until you feel a deep stretch. Builds the posterior chain that takes load off the quads during long WODs."}]'::jsonb,
 '[{"movement_id":"box_jump","name":"Box Jump","sets":4,"reps":"5","rpe_target":7,"rest_seconds":90,"description":"Full hip extension at top. Step down. Builds the explosive power that transfers to burpees, box jumps in WODs, and jumping rope efficiency."},{"movement_id":"pallof_press","name":"Pallof Press","sets":3,"reps":"10 each side","rpe_target":6,"rest_seconds":60,"description":"Anti-rotation core work. Builds the core stability that keeps your midline tight during heavy cycling and gymnastics."}]'::jsonb),
 
-('cf_engine_w1d2','crossfit','engine_builder',1,2,'Engine Builder — Upper Body Pull Endurance',
+('cf_engine_w1d2','crossfit','muscular_endurance',1,2,'Engine Builder — Upper Body Pull Endurance',
 'CrossFit athletes cycle pull-ups, ring rows, and rope climbs constantly. Day 2 builds the vertical and horizontal pulling strength that keeps these movements clean deep into WODs.',
 '["3 min easy row","2x10 scap pull-up","2x10 banded pull-apart","Dead hang 30 seconds","Lat stretch in doorframe 60 seconds each side"]'::jsonb,
 '[{"movement_id":"weighted_pullup","name":"Weighted Pull-Up","sets":5,"reps":"3","rpe_target":7.5,"rest_seconds":150,"description":"Add load to your pull-up. Dead hang start. Full range. This builds the strength that makes high-rep kipping pull-ups sustainable without shoulder fatigue."},{"movement_id":"lat_pulldown","name":"Lat Pulldown","sets":3,"reps":"10","rpe_target":6.5,"rest_seconds":120,"description":"Lean back slightly. Pull elbows to hips. Squeeze lats at bottom. Builds pulling endurance with less fatigue than weighted pull-ups."},{"movement_id":"pendlay_row","name":"Pendlay Row","sets":3,"reps":"6","rpe_target":7,"rest_seconds":150,"description":"Horizontal torso. Bar starts on floor each rep. Explosive pull. Builds upper back strength that supports ring work and rope climbs."}]'::jsonb,
 '[{"movement_id":"face_pull","name":"Face Pull","sets":4,"reps":"15","rpe_target":5.5,"rest_seconds":60,"description":"Critical shoulder health work for high-volume CrossFit athletes. External rotation at end range."},{"movement_id":"banded_pull_apart","name":"Banded Pull-Apart","sets":3,"reps":"20","rpe_target":5,"rest_seconds":45,"description":"Between sets of pull-ups or as finisher. Activates rear delts and rhomboids."}]'::jsonb),
 
 -- ATHX / Maximal Strength
-('athx_max_w1d1','athx','maximal_strength',1,1,'Maximal Strength — Squat and Hip Hinge',
+('athx_max_w1d1','athx','posterior_chain_hinge',1,1,'Maximal Strength — Squat and Hip Hinge',
 'ATHX demands peak strength expression across all movement patterns. Day 1 establishes your squat and deadlift strength benchmarks for this training block.',
 '["3 min easy bike or row","2x10 goblet squat","2x10 glute bridges","2x8 good morning with empty bar","Hip 90/90 stretch 60 seconds each side"]'::jsonb,
 '[{"movement_id":"back_squat","name":"Back Squat","sets":5,"reps":"3","rpe_target":8,"rest_seconds":240,"description":"Heavy sets. Full depth every rep. This is your primary lower body strength indicator for ATHX. Control the descent and explode on the way up."},{"movement_id":"conventional_deadlift","name":"Conventional Deadlift","sets":4,"reps":"3","rpe_target":8,"rest_seconds":240,"description":"Heavy hinge work. Bar stays in contact with shins. Lockout hips and knees simultaneously. Do not hyperextend lower back at top."},{"movement_id":"pause_squat","name":"Pause Squat","sets":3,"reps":"3","rpe_target":7.5,"rest_seconds":180,"description":"2-second pause at bottom with full tension. Eliminates stretch-shortening cycle. Builds pure bottom-position strength."}]'::jsonb,
 '[{"movement_id":"glute_ham_raise","name":"Glute-Ham Raise","sets":3,"reps":"5","rpe_target":7,"rest_seconds":120,"description":"As controlled as possible. Builds eccentric hamstring strength that supports sprinting and heavy deadlift work."},{"movement_id":"good_morning","name":"Good Morning","sets":3,"reps":"8","rpe_target":6.5,"rest_seconds":90,"description":"Light to moderate weight. Hip hinge with bar on traps. Builds erector and hamstring endurance in a lengthened position."}]'::jsonb),
 
-('athx_max_w1d2','athx','maximal_strength',1,2,'Maximal Strength — Upper Body Press and Pull',
+('athx_max_w1d2','athx','posterior_chain_hinge',1,2,'Maximal Strength — Upper Body Press and Pull',
 'Day 2 builds the upper body strength balance that ATHX competition demands. Heavy horizontal and vertical strength work with balanced pulling volume.',
 '["3 min easy row","2x10 banded pull-apart","2x10 band pull-apart overhead","2x8 strict press empty bar","Shoulder 90-90 stretch 60 seconds each side"]'::jsonb,
 '[{"movement_id":"bench_press","name":"Bench Press","sets":5,"reps":"3","rpe_target":8,"rest_seconds":240,"description":"Heavy horizontal press. Feet flat. Full range. Builds the upper body pressing strength that ATHX events demand."},{"movement_id":"strict_press","name":"Strict Press","sets":4,"reps":"4","rpe_target":7.5,"rest_seconds":180,"description":"Heavy overhead strength. Squeeze glutes and brace core before every rep. No leg drive."},{"movement_id":"weighted_pullup","name":"Weighted Pull-Up","sets":5,"reps":"3","rpe_target":8,"rest_seconds":180,"description":"Heavy weighted pull-up. Dead hang start. Full range. Builds the vertical pulling strength that transfers to all ATHX upper body demands."}]'::jsonb,
 '[{"movement_id":"face_pull","name":"Face Pull","sets":4,"reps":"15","rpe_target":5.5,"rest_seconds":60,"description":"Shoulder health work. External rotation at end range. Critical to balance the heavy pressing volume in this track."},{"movement_id":"single_arm_db_row","name":"Single-Arm Dumbbell Row","sets":3,"reps":"10 each","rpe_target":7,"rest_seconds":90,"description":"Horizontal pulling to balance the pressing. Full stretch at bottom. No hip rotation."}]'::jsonb),
 
 -- ATHX / Conditioning
-('athx_cond_w1d1','athx','conditioning',1,1,'Conditioning — Aerobic Strength Base',
+('athx_cond_w1d1','athx','upper_body_power',1,1,'Conditioning — Aerobic Strength Base',
 'ATHX conditioning combines sustained power output with strength endurance. Day 1 builds the lower body aerobic base needed to sustain work capacity across full ATHX events.',
 '["3 min easy jog or row","2x10 glute bridges","2x10 bodyweight squat","2x10 banded pull-apart","Hip 90/90 stretch 60 seconds each side"]'::jsonb,
 '[{"movement_id":"front_squat","name":"Front Squat","sets":4,"reps":"5","rpe_target":7,"rest_seconds":150,"description":"The conditioning track uses front squats to build positional strength under fatigue. Keep elbows high and torso vertical through every rep."},{"movement_id":"romanian_deadlift","name":"Romanian Deadlift","sets":4,"reps":"8","rpe_target":7,"rest_seconds":150,"description":"Hamstring durability under sustained effort. Push hips back to a deep stretch every rep. Moderate load — this builds endurance not max strength."},{"movement_id":"bulgarian_split_squat","name":"Bulgarian Split Squat","sets":3,"reps":"10 each leg","rpe_target":7,"rest_seconds":120,"description":"Unilateral strength endurance. Slightly lighter than max strength track. Focus on consistent range and tempo."}]'::jsonb,
 '[{"movement_id":"box_jump","name":"Box Jump","sets":5,"reps":"5","rpe_target":7,"rest_seconds":90,"description":"Explosive power output after strength work. Simulates the power-under-fatigue demands of ATHX competition. Full extension at top, step down."},{"movement_id":"farmer_carry","name":"Farmer Carry","sets":3,"reps":"40 meters","rpe_target":7,"rest_seconds":90,"description":"Loaded aerobic conditioning for grip, core, and legs. Stand tall and keep steps short and powerful."}]'::jsonb),
 
-('athx_cond_w1d2','athx','conditioning',1,2,'Conditioning — Upper Body Strength Endurance',
+('athx_cond_w1d2','athx','upper_body_power',1,2,'Conditioning — Upper Body Strength Endurance',
 'Day 2 shifts to upper body strength endurance. ATHX conditioning requires the shoulder and pull strength to sustain output across multiple events.',
 '["3 min easy row","2x10 scap pull-up","2x10 banded pull-apart","Dead hang 30 seconds","Lat stretch 60 seconds each side"]'::jsonb,
 '[{"movement_id":"push_press","name":"Push Press","sets":5,"reps":"5","rpe_target":7.5,"rest_seconds":150,"description":"Moderate load with powerful leg drive. Builds the pressing power and endurance to sustain shoulder output in ATHX competition."},{"movement_id":"pendlay_row","name":"Pendlay Row","sets":4,"reps":"6","rpe_target":7.5,"rest_seconds":150,"description":"Explosive horizontal pull from a dead stop. Builds upper back strength endurance that supports all pulling and lifting events."},{"movement_id":"lat_pulldown","name":"Lat Pulldown","sets":3,"reps":"12","rpe_target":6.5,"rest_seconds":90,"description":"Pulling volume finisher. Lean back slightly. Pull elbows to hips. Builds lat endurance for sustained pulling output."}]'::jsonb,
 '[{"movement_id":"face_pull","name":"Face Pull","sets":4,"reps":"15","rpe_target":5.5,"rest_seconds":60,"description":"Shoulder health work. External rotation at end range. Balances the heavy pressing volume."},{"movement_id":"pallof_press","name":"Pallof Press","sets":3,"reps":"10 each side","rpe_target":6,"rest_seconds":60,"description":"Anti-rotation core finisher. Builds the lateral stability needed for sustained event performance."}]'::jsonb);
+
+-- ============================================================
+-- SUBTRACK CONFIG (frequency + copy for onboarding — requires migrations 006–007)
+-- ============================================================
+insert into subtrack_config (
+  id, discipline, subtrack, display_name,
+  base_days_per_week, flex_days_per_week, total_weeks,
+  description, who_its_for
+) values
+('cf_lower_body_strength', 'crossfit', 'lower_body_strength', 'Lower Body Strength',
+  2, 1, 4,
+  'Squat patterns and posterior chain work that directly improves your clean, thruster, wall ball, and every squat-based movement in CrossFit.',
+  'CrossFit athletes who feel like their lower body strength is the bottleneck in WODs. If your legs gas out before your lungs, this is your track.'),
+('cf_overhead_shoulder_strength', 'crossfit', 'overhead_shoulder_strength', 'Overhead & Shoulder Strength',
+  2, 1, 4,
+  'Strict pressing, vertical pulling, and shoulder stability work that builds the foundation for gymnastics and overhead barbell movements.',
+  'CrossFit athletes whose HSPU, muscle-up, or overhead lifting is limited by strength rather than technique or conditioning.'),
+('cf_pulling_strength', 'crossfit', 'pulling_strength', 'Pulling Strength',
+  2, 0, 4,
+  'Horizontal and vertical pulling work that balances the enormous pressing volume in CrossFit programming and builds real pulling strength.',
+  'CrossFit athletes who kip everything and have never built strict pulling strength. If weighted pull-ups feel foreign, start here.'),
+('cf_muscular_endurance', 'crossfit', 'muscular_endurance', 'Muscular Endurance',
+  3, 0, 4,
+  'Moderate-load, moderate-rep training that builds the ability to move weight repeatedly and efficiently — the engine behind barbell cycling and long metcons.',
+  'CrossFit athletes who move well and are reasonably strong but fall apart in longer workouts. Your engine is there. Your muscular endurance is the gap.'),
+('hyrox_sled_carry_strength', 'hyrox', 'sled_carry_strength', 'Sled & Loaded Carry Strength',
+  2, 1, 5,
+  'Hip drive, unilateral strength, and loaded carry capacity that directly translates to the sled push, sled pull, and sandbag carry stations.',
+  'Hyrox athletes who lose time on the sled and carry stations. If your legs are strong in the gym but the sled destroys you under race fatigue, this is your track.'),
+('hyrox_running_economy_strength', 'hyrox', 'running_economy_strength', 'Running Economy Strength',
+  2, 1, 5,
+  'Single-leg power and hip stability work that improves running efficiency without adding run volume — the missing piece for gym-strong athletes.',
+  'Hyrox athletes coming from a gym background who struggle to hold pace across all 8km. You are strong but your running deteriorates under load.'),
+('hyrox_station_strength', 'hyrox', 'station_specific_strength', 'Station-Specific Strength',
+  2, 0, 5,
+  'Targeted strength work for the exact movements in a Hyrox race — SkiErg, rowing, wall ball, and burpee box jump-overs.',
+  'Hyrox athletes who have done races before and know which specific stations cost them the most time. Use this track to attack those weaknesses directly.'),
+('hyrox_strength_endurance', 'hyrox', 'strength_endurance', 'Strength Endurance',
+  3, 1, 5,
+  'Aerobic strength work that trains your ability to maintain force output across repeated efforts — what separates athletes at station 7 and 8 from those who are just surviving.',
+  'Hyrox athletes who are fit and strong but fade in the second half of the race. Your individual station strength is fine. Your ability to repeat it eight times is not.'),
+('athx_explosive_power', 'athx', 'explosive_power', 'Explosive Power',
+  2, 1, 6,
+  'Power-focused Olympic lifting variations and plyometric work that builds rate of force development across all the explosive demands in ATHX competition.',
+  'ATHX athletes who feel slow or flat in competition despite solid conditioning. If your power output drops under fatigue, this track rebuilds it from the ground up.'),
+('athx_posterior_chain', 'athx', 'posterior_chain_hinge', 'Posterior Chain & Hinge',
+  2, 1, 6,
+  'Deadlift patterns and hip extension work that builds the posterior chain strength ATHX athletes need for sprinting, jumping, and sled-based movements.',
+  'ATHX athletes with a CrossFit background who squat well but have never seriously developed their deadlift and hinge patterns. This is a common and fixable gap.'),
+('athx_upper_body_power', 'athx', 'upper_body_power', 'Upper Body Power',
+  2, 0, 6,
+  'Horizontal and vertical push and pull strength that builds the upper body output ATHX demands — more than Hyrox, less technical than CrossFit gymnastics.',
+  'ATHX athletes who are lower-body dominant. If your upper body fades before your legs in competition, this is your track.'),
+('athx_competition_prep', 'athx', 'competition_prep', 'Competition Prep',
+  3, 1, 6,
+  'A peaking block for athletes 6–8 weeks out from an ATHX event. Higher intensity, lower volume, sport-specific loading. Run this after completing another ATHX track.',
+  'ATHX athletes who have a competition on the calendar and want a structured peaking block. This track assumes a solid strength base — do not start here if it is your first Fortify cycle.')
+on conflict (id) do update set
+  display_name = excluded.display_name,
+  base_days_per_week = excluded.base_days_per_week,
+  flex_days_per_week = excluded.flex_days_per_week,
+  total_weeks = excluded.total_weeks,
+  description = excluded.description,
+  who_its_for = excluded.who_its_for;
+
+-- Example flex sessions (additive; base progression ignores is_flex_day = true)
+insert into workouts (
+  id, discipline, subtrack, week_number, day_number,
+  title, coach_note, is_flex_day, flex_day_type, flex_day_note,
+  warmup, main_work, accessory
+) values
+(
+  'hyrox_sled_w1_flex',
+  'hyrox', 'sled_carry_strength', 1, 3,
+  'Week 1 Flex — Volume Bonus',
+  'This is your optional third session for the week. Only add this if Day 1 and Day 2 felt manageable and you have fresh legs. If you are sore or tired, skip it — the base two sessions are all you need this week.',
+  true, 'volume',
+  'Good week with energy to spare? Add this session. It is shorter than your base days and focused on carry volume rather than heavy loading.',
+  '["5 min easy bike","2x10 glute bridge","Hip 90/90 stretch 60 seconds each side"]'::jsonb,
+  '[{"movement_id":"farmer_carry","name":"Farmer Carry","sets":5,"reps":"40 meters","rpe_target":6.5,"rest_seconds":90,"description":"Lighter than your Day 1 carries. Focus on posture and consistency across all 5 sets. This is volume work not max effort."},{"movement_id":"suitcase_carry","name":"Suitcase Carry","sets":4,"reps":"25 meters each side","rpe_target":6,"rest_seconds":75,"description":"Single arm. Resist the lateral lean. Hips stay level for every step."}]'::jsonb,
+  '[{"movement_id":"calf_raise","name":"Calf Raise","sets":3,"reps":"20","rpe_target":5,"rest_seconds":45,"description":"Full range. Pause at top. Single leg if this feels too easy."},{"movement_id":"pallof_press","name":"Pallof Press","sets":3,"reps":"10 each side","rpe_target":5,"rest_seconds":45,"description":"Light. Anti-rotation core work to close out the week."}]'::jsonb
+),
+(
+  'cf_overhead_w2_flex',
+  'crossfit', 'overhead_shoulder_strength', 2, 3,
+  'Week 2 Flex — Technique Focus',
+  'Optional session this week. If your pressing felt solid through Day 1 and Day 2 use this for movement quality work. Nothing heavy. Everything intentional.',
+  true, 'technique',
+  'This week is a good time to add the flex day if your overhead position felt restricted during the main sessions. Light loads, long pauses, quality reps.',
+  '["3 min easy row","2x10 banded pull-apart","2x8 strict press empty bar","Thoracic extension over foam roller 60 seconds"]'::jsonb,
+  '[{"movement_id":"z_press","name":"Z-Press","sets":4,"reps":"6","rpe_target":6,"rest_seconds":120,"description":"Technique day — lighter than your Day 1 Z-Press. 2-second pause at the top of each rep. Focus on vertical torso and full lockout."},{"movement_id":"landmine_press","name":"Landmine Press","sets":3,"reps":"10 each arm","rpe_target":5.5,"rest_seconds":90,"description":"Single arm. Full range. Use a weight that lets you feel every part of the press."}]'::jsonb,
+  '[{"movement_id":"face_pull","name":"Face Pull","sets":4,"reps":"20","rpe_target":5,"rest_seconds":45,"description":"High rep light load. External rotation at end range."},{"movement_id":"banded_pull_apart","name":"Banded Pull-Apart","sets":3,"reps":"25","rpe_target":4,"rest_seconds":30,"description":"Finisher. Arms straight. Slow and controlled."}]'::jsonb
+)
+on conflict (id) do nothing;
 
 -- ============================================================
 -- CHAT SEED MESSAGES

@@ -3,6 +3,8 @@ import { useParams, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
 import { supabase } from '@/lib/supabase';
 import { useSubtracks, buildDisciplineFromSubtrack } from '@/hooks/use-subtracks';
+import { useSubtrackConfig } from '@/hooks/use-subtrack-config';
+import { formatSessionsPerWeekLabel } from '@/lib/frequency-label';
 import { getSubtrackDetail } from '@/lib/subtrack-details';
 import { ALL_SUBTRACKS } from '@/lib/subtracks';
 import { Button } from '@/components/ui/button';
@@ -29,6 +31,7 @@ export default function SubtrackPreviewPage() {
 
   const discipline = getDiscipline(id);
   const disciplineLabel = subtracks.find(g => g.discipline === discipline)?.label ?? discipline;
+  const { data: trackConfig } = useSubtrackConfig(discipline, id);
   const disciplineColor = DISCIPLINE_COLORS[discipline] ?? '#F05A28';
 
   const subtrackInfo = subtracks
@@ -48,7 +51,7 @@ export default function SubtrackPreviewPage() {
         .eq('id', profile.id);
       if (error) throw error;
       await refreshProfile();
-      queryClient.invalidateQueries({ queryKey: ['nextWorkout'] });
+      queryClient.invalidateQueries({ queryKey: ['next-workout'] });
       toast.success(`Switched to ${subtrackInfo?.name ?? id}`);
       setLocation('/');
     } catch (err) {
@@ -115,7 +118,12 @@ export default function SubtrackPreviewPage() {
             </div>
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/60 border border-white/10 text-sm text-white/80">
               <Dumbbell className="w-4 h-4 text-primary" />
-              {detail.frequency}
+              {trackConfig
+                ? formatSessionsPerWeekLabel(
+                    trackConfig.base_days_per_week,
+                    trackConfig.flex_days_per_week,
+                  )
+                : detail.frequency}
             </div>
           </div>
         )}

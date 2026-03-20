@@ -18,19 +18,22 @@ export function shortDate(date: string) {
 
 export const DISCIPLINE_SUBTRACKS: Record<string, { id: string; name: string }[]> = {
   crossfit: [
-    { id: 'overhead_shoulder_strength', name: 'Overhead & Shoulder' },
     { id: 'lower_body_strength', name: 'Lower Body Strength' },
-    { id: 'engine_builder', name: 'Engine Builder' },
+    { id: 'overhead_shoulder_strength', name: 'Overhead & Shoulder Strength' },
+    { id: 'pulling_strength', name: 'Pulling Strength' },
+    { id: 'muscular_endurance', name: 'Muscular Endurance' },
   ],
   hyrox: [
-    { id: 'sled_carry_strength', name: 'Sled & Carry Strength' },
-    { id: 'running_economy', name: 'Running Economy' },
-    { id: 'upper_body_push', name: 'Upper Body Push' },
+    { id: 'sled_carry_strength', name: 'Sled & Loaded Carry Strength' },
+    { id: 'running_economy_strength', name: 'Running Economy Strength' },
+    { id: 'station_specific_strength', name: 'Station-Specific Strength' },
+    { id: 'strength_endurance', name: 'Strength Endurance' },
   ],
   athx: [
     { id: 'explosive_power', name: 'Explosive Power' },
-    { id: 'maximal_strength', name: 'Maximal Strength' },
-    { id: 'conditioning', name: 'Conditioning' },
+    { id: 'posterior_chain_hinge', name: 'Posterior Chain & Hinge' },
+    { id: 'upper_body_power', name: 'Upper Body Power' },
+    { id: 'competition_prep', name: 'Competition Prep' },
   ],
 };
 

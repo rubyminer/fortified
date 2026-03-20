@@ -25,10 +25,17 @@ This repo is a **pnpm workspace**. Use pnpm (not npm at the repo root — the ro
    - `supabase/migrations/003_subtracks.sql`
    - `supabase/migrations/004_sports.sql`
    - `supabase/migrations/005_rename_sport_to_discipline.sql`
+   - `supabase/migrations/006_subtrack_flex_and_config.sql`
+   - `supabase/migrations/007_subtrack_taxonomy_v2.sql`
+   - `supabase/migrations/008_realtime_broadcast.sql`
 
 3. **Seed data**: run `supabase/seed.sql`.
 
-4. **Realtime** (Supabase Dashboard → Database → Replication): enable for `chat_messages` and `sessions` if not already on.
+4. **Realtime (Fortify chat)**  
+   - Run migration **`008_realtime_broadcast.sql`** so `chat_messages` (and `sessions`) changes are **broadcast** on private channels with RLS on `realtime.messages`.  
+   - The Fortify app subscribes with **`private: true`** and **`supabase.realtime.setAuth()`** — requires **`@supabase/supabase-js` ≥ 2.44**.  
+   - In **Supabase Dashboard → Project Settings → Realtime**: turn **off** “Allow public access” when you want private-channel enforcement (recommended for production).  
+   - Legacy **postgres_changes** + **Database → Replication** on `chat_messages` is optional after 008; the app no longer uses it for chat. You may **drop** those tables from the `supabase_realtime` publication if nothing else needs WAL streaming for them (see comments in `008`).
 
 5. **Environment files**
 

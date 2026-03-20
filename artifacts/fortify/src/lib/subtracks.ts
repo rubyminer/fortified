@@ -10,34 +10,38 @@ export interface DisciplineGroup {
   subtracks: SubtrackInfo[];
 }
 
+/** Offline / empty-DB fallback — matches migrations 007 + subtrack_config. */
 export const ALL_SUBTRACKS: DisciplineGroup[] = [
   {
     discipline: 'crossfit',
     label: 'CrossFit',
     subtracks: [
-      { id: 'overhead_shoulder_strength', name: 'Overhead & Shoulder', desc: 'Press strength and stability' },
       { id: 'lower_body_strength', name: 'Lower Body Strength', desc: 'Squat and hinge patterns' },
-      { id: 'engine_builder', name: 'Engine Builder', desc: 'Aerobic capacity and pacing' },
-    ]
+      { id: 'overhead_shoulder_strength', name: 'Overhead & Shoulder Strength', desc: 'Press strength and stability' },
+      { id: 'pulling_strength', name: 'Pulling Strength', desc: 'Strict pulling strength' },
+      { id: 'muscular_endurance', name: 'Muscular Endurance', desc: 'Barbell cycling and endurance' },
+    ],
   },
   {
     discipline: 'hyrox',
     label: 'Hyrox',
     subtracks: [
-      { id: 'sled_carry_strength', name: 'Sled & Carry Strength', desc: 'Push/pull force production' },
-      { id: 'running_economy', name: 'Running Economy', desc: 'Efficiency and stride mechanics' },
-      { id: 'upper_body_push', name: 'Upper Body Push', desc: 'Chest and shoulder endurance' },
-    ]
+      { id: 'sled_carry_strength', name: 'Sled & Loaded Carry Strength', desc: 'Hip drive and carries' },
+      { id: 'running_economy_strength', name: 'Running Economy Strength', desc: 'Single-leg and running strength' },
+      { id: 'station_specific_strength', name: 'Station-Specific Strength', desc: 'Race station strength' },
+      { id: 'strength_endurance', name: 'Strength Endurance', desc: 'Repeatable strength' },
+    ],
   },
   {
     discipline: 'athx',
     label: 'ATHX',
     subtracks: [
-      { id: 'explosive_power', name: 'Explosive Power', desc: 'Speed-strength and plyometrics' },
-      { id: 'maximal_strength', name: 'Maximal Strength', desc: 'Peak force development' },
-      { id: 'conditioning', name: 'Conditioning', desc: 'Work capacity and recovery' },
-    ]
-  }
+      { id: 'explosive_power', name: 'Explosive Power', desc: 'Olympic variations and plyometrics' },
+      { id: 'posterior_chain_hinge', name: 'Posterior Chain & Hinge', desc: 'Deadlift and hip extension' },
+      { id: 'upper_body_power', name: 'Upper Body Power', desc: 'Upper push and pull power' },
+      { id: 'competition_prep', name: 'Competition Prep', desc: 'Peaking for event day' },
+    ],
+  },
 ];
 
 const SUBTRACK_TO_DISCIPLINE: Record<string, string> = {};

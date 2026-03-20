@@ -34,6 +34,9 @@ export interface Workout {
   main_work: WorkoutExercise[] | null;
   accessory: WorkoutExercise[] | null;
   created_at: string;
+  is_flex_day?: boolean;
+  flex_day_type?: string | null;
+  flex_day_note?: string | null;
 }
 
 export interface Session {

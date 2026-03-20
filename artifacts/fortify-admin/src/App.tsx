@@ -4,6 +4,7 @@ import { ToastProvider } from '@/components/Toast';
 import { LoginPage } from '@/pages/LoginPage';
 import { Dashboard } from '@/pages/Dashboard';
 import { Workouts } from '@/pages/Workouts';
+import { SubtrackConfig } from '@/pages/SubtrackConfig';
 import { Movements } from '@/pages/Movements';
 import { Disciplines } from '@/pages/Disciplines';
 import { Subtracks } from '@/pages/Subtracks';
@@ -38,6 +39,7 @@ function AppRoutes() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/workouts" component={Workouts} />
+      <Route path="/subtrack-config" component={SubtrackConfig} />
       <Route path="/movements" component={Movements} />
       <Route path="/disciplines" component={Disciplines} />
       <Route path="/subtracks" component={Subtracks} />

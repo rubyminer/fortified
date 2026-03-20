@@ -52,7 +52,7 @@ export const SUBTRACK_DETAILS: Record<string, SubtrackDetail> = {
     ],
   },
 
-  engine_builder: {
+  muscular_endurance: {
     duration: "4-week cycle",
     frequency: "2\u20133 sessions / week",
     rationale:
@@ -96,7 +96,7 @@ export const SUBTRACK_DETAILS: Record<string, SubtrackDetail> = {
     ],
   },
 
-  running_economy: {
+  running_economy_strength: {
     duration: "5-week cycle",
     frequency: "2\u20133 sessions / week",
     rationale:
@@ -117,7 +117,7 @@ export const SUBTRACK_DETAILS: Record<string, SubtrackDetail> = {
     ],
   },
 
-  upper_body_push: {
+  station_specific_strength: {
     duration: "5-week cycle",
     frequency: "2\u20133 sessions / week",
     rationale:
@@ -161,7 +161,7 @@ export const SUBTRACK_DETAILS: Record<string, SubtrackDetail> = {
     ],
   },
 
-  maximal_strength: {
+  posterior_chain_hinge: {
     duration: "6-week cycle",
     frequency: "3\u20134 sessions / week",
     rationale:
@@ -182,7 +182,7 @@ export const SUBTRACK_DETAILS: Record<string, SubtrackDetail> = {
     ],
   },
 
-  conditioning: {
+  upper_body_power: {
     duration: "6-week cycle",
     frequency: "3\u20134 sessions / week",
     rationale:
@@ -200,6 +200,45 @@ export const SUBTRACK_DETAILS: Record<string, SubtrackDetail> = {
       "Build fatigue resistance at sport-relevant intensities",
       "Improve work capacity so later events cost less energy",
       "Train the mental and physical ability to push through accumulated load",
+    ],
+  },
+
+  pulling_strength: {
+    duration: "4-week cycle",
+    frequency: "2 sessions / week",
+    rationale:
+      "CrossFit athletes often over-rely on kipping and never build strict pulling strength. This track balances pressing volume with heavy vertical and horizontal pulls.",
+    focusMovements: ["Weighted pull-up", "Pendlay row", "Single-arm row", "Face pull", "Lat pulldown"],
+    goals: [
+      "Build strict pulling strength independent of kipping technique",
+      "Balance shoulder health against high pressing volume",
+      "Improve rope climb and bar muscle-up strength foundations",
+    ],
+  },
+
+  strength_endurance: {
+    duration: "5-week cycle",
+    frequency: "3–4 sessions / week",
+    rationale:
+      "Hyrox rewards athletes who can repeat station efforts without collapsing. This track trains strength endurance across full race distance.",
+    focusMovements: ["Tempo squats", "Carry intervals", "Row erg strength", "Wall ball volume", "SkiErg pulls"],
+    goals: [
+      "Maintain force output across repeated race stations",
+      "Delay metabolic collapse in the second half of the race",
+      "Build durability for eight demanding efforts",
+    ],
+  },
+
+  competition_prep: {
+    duration: "6-week cycle",
+    frequency: "3–4 sessions / week",
+    rationale:
+      "A structured peaking phase for ATHX athletes with a competition date. Assumes a prior strength block — higher intensity, tighter volume, sport-specific emphasis.",
+    focusMovements: ["Heavy singles and doubles", "Contrast sets", "Sport-specific complexes", "Explosive primers"],
+    goals: [
+      "Peak strength and power without accumulating fatigue",
+      "Sharpen competition patterns under moderate load",
+      "Arrive at race day fresh and confident",
     ],
   },
 };
