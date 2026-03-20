@@ -11,10 +11,21 @@ import {
 interface Stats { users: number; sessions: number; recent: number; prs: number; prevRecent: number; prevUsers: number; }
 
 const DISCIPLINE_COLORS: Record<string, string> = {
-  crossfit: '#1d4ed8', hyrox: '#166534', athx: '#92400e',
-  overhead_shoulder_strength: '#1d4ed8', lower_body_strength: '#2563eb', engine_builder: '#3b82f6',
-  sled_carry_strength: '#166534', running_economy: '#15803d', upper_body_push: '#16a34a',
-  explosive_power: '#92400e', maximal_strength: '#b45309', conditioning: '#d97706',
+  crossfit: '#1d4ed8',
+  hyrox: '#166534',
+  athx: '#92400e',
+  lower_body_strength: '#2563eb',
+  overhead_shoulder_strength: '#1d4ed8',
+  pulling_strength: '#3b82f6',
+  muscular_endurance: '#60a5fa',
+  sled_carry_strength: '#166534',
+  running_economy_strength: '#15803d',
+  station_specific_strength: '#16a34a',
+  strength_endurance: '#22c55e',
+  explosive_power: '#92400e',
+  posterior_chain_hinge: '#b45309',
+  upper_body_power: '#d97706',
+  competition_prep: '#f59e0b',
 };
 
 function pct(a: number, b: number) {

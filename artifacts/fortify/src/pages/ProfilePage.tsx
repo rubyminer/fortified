@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
 import { useRecentSessions } from '@/hooks/use-workouts';
 import { useSubtracks } from '@/hooks/use-subtracks';
+import { useSubtrackConfig } from '@/hooks/use-subtrack-config';
+import { formatCycleHeaderLabel } from '@/lib/frequency-label';
 import { supabase } from '@/lib/supabase';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,6 +26,7 @@ export default function ProfilePage() {
   const { profile, signOut, refreshProfile } = useAuth();
   const { data: sessions } = useRecentSessions(profile?.id);
   const { data: subtracks = [] } = useSubtracks();
+  const { data: subConfig } = useSubtrackConfig(profile?.discipline, profile?.subtrack);
   const [saving, setSaving] = useState(false);
 
   const formatSubtrack = (str: string) =>
@@ -81,7 +84,13 @@ export default function ProfilePage() {
             <div className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-1">Current Track</div>
             <div className="text-white font-semibold">{formatSubtrack(profile?.subtrack || '')}</div>
             <div className="text-xs mt-1 font-bold" style={{ color: disciplineColor(profile?.discipline ?? '') }}>
-              {profile?.frequency} Days / Week
+              {subConfig
+                ? formatCycleHeaderLabel(
+                    subConfig.base_days_per_week,
+                    subConfig.flex_days_per_week,
+                    subConfig.total_weeks,
+                  )
+                : `${profile?.frequency ?? '—'} base days / week`}
             </div>
           </div>
         </CardContent>

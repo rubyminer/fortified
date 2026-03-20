@@ -64,10 +64,26 @@ interface FormState {
   discipline: string; subtrack: string; week_number: number; day_number: number;
   title: string; coach_note: string; warmup: string[];
   main_work: WorkoutExercise[]; accessory: WorkoutExercise[];
+  is_flex_day: boolean;
+  flex_day_type: string;
+  flex_day_note: string;
 }
 
 function defaultForm(): FormState {
-  return { discipline: 'crossfit', subtrack: 'overhead_shoulder_strength', week_number: 1, day_number: 1, title: '', coach_note: '', warmup: [''], main_work: [emptyExercise()], accessory: [] };
+  return {
+    discipline: 'crossfit',
+    subtrack: 'lower_body_strength',
+    week_number: 1,
+    day_number: 1,
+    title: '',
+    coach_note: '',
+    warmup: [''],
+    main_work: [emptyExercise()],
+    accessory: [],
+    is_flex_day: false,
+    flex_day_type: 'volume',
+    flex_day_note: '',
+  };
 }
 
 export function Workouts() {
@@ -104,6 +120,9 @@ export function Workouts() {
       warmup: (w.warmup ?? []).concat(''),
       main_work: (w.main_work ?? []).length ? (w.main_work ?? []) : [emptyExercise()],
       accessory: w.accessory ?? [],
+      is_flex_day: !!w.is_flex_day,
+      flex_day_type: w.flex_day_type ?? 'volume',
+      flex_day_note: w.flex_day_note ?? '',
     });
     setDrawerOpen(true);
   }
@@ -120,6 +139,9 @@ export function Workouts() {
       warmup: (w.warmup ?? []).concat(''),
       main_work: (w.main_work ?? []).length ? [...(w.main_work ?? [])] : [emptyExercise()],
       accessory: [...(w.accessory ?? [])],
+      is_flex_day: !!w.is_flex_day,
+      flex_day_type: w.flex_day_type ?? 'volume',
+      flex_day_note: w.flex_day_note ?? '',
     });
     setDrawerOpen(true);
   }
@@ -133,6 +155,9 @@ export function Workouts() {
       warmup: form.warmup.filter(w => w.trim()),
       main_work: form.main_work,
       accessory: form.accessory.length ? form.accessory : null,
+      is_flex_day: form.is_flex_day,
+      flex_day_type: form.is_flex_day ? form.flex_day_type : null,
+      flex_day_note: form.is_flex_day ? (form.flex_day_note.trim() || null) : null,
     };
     const { error } = editId
       ? await supabase.from('workouts').update(payload).eq('id', editId)
@@ -282,6 +307,40 @@ export function Workouts() {
           <label>Coach Note</label>
           <textarea rows={3} value={form.coach_note} onChange={e => setForm({ ...form, coach_note: e.target.value })} placeholder="Tips, context, intent…" />
         </div>
+
+        <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <input
+            type="checkbox"
+            id="is_flex_day"
+            checked={form.is_flex_day}
+            onChange={e => setForm({ ...form, is_flex_day: e.target.checked })}
+          />
+          <label htmlFor="is_flex_day" style={{ margin: 0, cursor: 'pointer' }}>Is Flex Day (optional session)</label>
+        </div>
+        {form.is_flex_day && (
+          <>
+            <div className="form-group">
+              <label>Flex Day Type</label>
+              <select
+                value={form.flex_day_type}
+                onChange={e => setForm({ ...form, flex_day_type: e.target.value })}
+              >
+                <option value="volume">volume</option>
+                <option value="technique">technique</option>
+                <option value="recovery">recovery</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label>Flex Day Note</label>
+              <textarea
+                rows={2}
+                value={form.flex_day_note}
+                onChange={e => setForm({ ...form, flex_day_note: e.target.value })}
+                placeholder="Tell athletes when and why to add this session."
+              />
+            </div>
+          </>
+        )}
 
         <div className="section-divider">Warmup</div>
         {form.warmup.map((w, i) => (

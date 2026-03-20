@@ -2,31 +2,40 @@ import { Link, useRoute } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
 import { ReactNode } from 'react';
 
-const NAV = [
-  { path: '/', label: 'Dashboard', icon: '⬛' },
-  { path: '/workouts', label: 'Workouts', icon: '💪' },
-  { path: '/movements', label: 'Movements', icon: '🏋️' },
-  { path: '/disciplines', label: 'Disciplines', icon: '🏅' },
-  { path: '/subtracks', label: 'Subtracks', icon: '🎯' },
-  { path: '/visualizer', label: 'Visualizer', icon: '📈' },
-  { path: '/users', label: 'Users', icon: '👤' },
-  { path: '/community', label: 'Community', icon: '💬' },
-  { path: '/analytics', label: 'Analytics', icon: '📊' },
+const NAV: { path: string; label: string; nested?: boolean }[] = [
+  { path: '/', label: 'Dashboard' },
+  { path: '/disciplines', label: 'Disciplines' },
+  { path: '/subtracks', label: 'Subtracks' },
+  { path: '/subtrack-config', label: 'Track Structure', nested: true },
+  { path: '/workouts', label: 'Workouts' },
+  { path: '/visualizer', label: 'Visualizer' },
+  { path: '/movements', label: 'Movements' },
+  { path: '/users', label: 'Users' },
+  { path: '/community', label: 'Community' },
+  { path: '/analytics', label: 'Analytics' },
 ];
 
-function NavItem({ path, label }: { path: string; label: string }) {
-  const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+function NavItem({ path, label, nested }: { path: string; label: string; nested?: boolean }) {
   const [active] = useRoute(path);
   return (
-    <Link href={path} style={{
-      display: 'flex', alignItems: 'center', padding: '10px 16px',
-      fontSize: 14, fontWeight: 500, textDecoration: 'none', borderRadius: 0,
-      color: active ? '#F05A28' : '#888',
-      background: active ? 'rgba(240,90,40,0.08)' : 'transparent',
-      borderLeft: active ? '3px solid #F05A28' : '3px solid transparent',
-      transition: 'all 0.15s', cursor: 'pointer',
-    }}>
-      {label}
+    <Link
+      href={path}
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        padding: nested ? '8px 16px 8px 28px' : '10px 16px',
+        fontSize: nested ? 13 : 14,
+        fontWeight: nested ? 400 : 500,
+        textDecoration: 'none',
+        borderRadius: 0,
+        color: active ? '#F05A28' : nested ? '#6b6b6b' : '#888',
+        background: active ? 'rgba(240,90,40,0.08)' : 'transparent',
+        borderLeft: active ? '3px solid #F05A28' : '3px solid transparent',
+        transition: 'all 0.15s',
+        cursor: 'pointer',
+      }}
+    >
+      {nested ? `↳ ${label}` : label}
     </Link>
   );
 }
@@ -52,7 +61,9 @@ export function Layout({ children, section }: Props) {
           </div>
         </div>
         <nav style={{ flex: 1, paddingTop: 8 }}>
-          {NAV.map(n => <NavItem key={n.path} path={n.path} label={n.label} />)}
+          {NAV.map(n => (
+            <NavItem key={n.path} path={n.path} label={n.label} nested={n.nested} />
+          ))}
         </nav>
         <div style={{ padding: 16, borderTop: '1px solid #2a2a2a', fontSize: 12, color: '#666' }}>
           Admin Panel v1.0

@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/use-auth';
-import { useNextWorkout, useRecentSessions } from '@/hooks/use-workouts';
+import {
+  useFlexWorkoutForWeek,
+  useNextWorkout,
+  useRecentSessions,
+} from '@/hooks/use-workouts';
+import { FeedCycleSection } from '@/components/FeedCycleSection';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +30,13 @@ export default function FeedPage() {
     profile?.id
   );
   const { data: recentSessions, isLoading: isSessionsLoading } = useRecentSessions(profile?.id);
+
+  const { data: flexWorkout } = useFlexWorkoutForWeek(
+    profile?.discipline,
+    profile?.subtrack,
+    nextWorkout?.week_number,
+    profile?.id,
+  );
 
   function handleSelectSubtrack(id: string) {
     setSwitcherOpen(false);
@@ -139,7 +151,37 @@ export default function FeedPage() {
             </CardContent>
           </Card>
         )}
+
+        {flexWorkout && (
+          <Card className="border-dashed border-primary/35 bg-primary/[0.04]">
+            <CardHeader className="pb-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-primary">
+                  Optional this week
+                </span>
+                {flexWorkout.flex_day_type && (
+                  <Badge variant="secondary" className="capitalize text-xs">
+                    {flexWorkout.flex_day_type}
+                  </Badge>
+                )}
+              </div>
+              <CardTitle className="text-lg mt-1">{flexWorkout.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {flexWorkout.flex_day_note && (
+                <p className="text-sm text-muted-foreground leading-relaxed">{flexWorkout.flex_day_note}</p>
+              )}
+              <Link href={`/workout/${flexWorkout.id}`}>
+                <Button variant="outline" className="w-full border-primary/40 text-primary hover:bg-primary/10">
+                  View Session
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        )}
       </section>
+
+      {profile && <FeedCycleSection profile={profile} />}
 
       {/* Stats */}
       <section className="grid grid-cols-2 gap-4">
