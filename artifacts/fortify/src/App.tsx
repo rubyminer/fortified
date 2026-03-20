@@ -16,6 +16,7 @@ import PRsPage from "@/pages/PRsPage";
 import CommunityPage from "@/pages/CommunityPage";
 import ProfilePage from "@/pages/ProfilePage";
 import SubtrackPreviewPage from "@/pages/SubtrackPreviewPage";
+import ProgramPage from "@/pages/ProgramPage";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,13 @@ function Router() {
         {() => (
           <ProtectedRoute>
             <FeedPage />
+          </ProtectedRoute>
+        )}
+      </Route>
+      <Route path="/program">
+        {() => (
+          <ProtectedRoute>
+            <ProgramPage />
           </ProtectedRoute>
         )}
       </Route>

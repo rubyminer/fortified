@@ -31,6 +31,33 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+self.addEventListener('push', (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (_) {}
+  const title = data.title || 'Fortify';
+  const url = data.url || BASE_PATH + '/feed';
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: data.body || '',
+      icon: BASE_PATH + '/icons/icon-192.png',
+      data: { url },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || BASE_PATH + '/feed';
+  const fullUrl = new URL(url, self.location.origin).href;
+  event.waitUntil(
+    self.clients.openWindow
+      ? self.clients.openWindow(fullUrl)
+      : Promise.resolve(),
+  );
+});
+
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 

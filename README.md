@@ -28,6 +28,7 @@ This repo is a **pnpm workspace**. Use pnpm (not npm at the repo root — the ro
    - `supabase/migrations/006_subtrack_flex_and_config.sql`
    - `supabase/migrations/007_subtrack_taxonomy_v2.sql`
    - `supabase/migrations/008_realtime_broadcast.sql`
+   - `supabase/migrations/009_scheduled_sessions_and_notifications.sql`
 
 3. **Seed data**: run `supabase/seed.sql`.
 
@@ -68,6 +69,18 @@ Each Vite app listens on **http://localhost:5173** by default. Override with `PO
 
 Optional for Replit-style hosting: set `BASE_PATH` if the app is served under a subpath.
 
+### Backend (Web Push cron)
+
+After migration **009**, you can run the Express **backend** for scheduled notifications:
+
+```bash
+cp artifacts/api-server/.env.example artifacts/api-server/.env
+# Set SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY
+pnpm --filter @workspace/api-server dev
+```
+
+Use the same VAPID **public** key in Fortify as `VITE_VAPID_PUBLIC_KEY` (see `artifacts/fortify/.env.example`) so onboarding / Profile can subscribe.
+
 ## Build
 
 ```bash
@@ -76,7 +89,7 @@ pnpm run build
 
 ## Product direction & backlog
 
-See `replit.md` for workspace layout and stack notes. Larger feature specs (flex-day model, scheduling, notifications) are tracked in your product doc — the database today uses `disciplines`, `subtracks`, and `workouts`; migrations for `subtrack_config`, flex fields, and `scheduled_sessions` are not in this repo yet.
+See `replit.md` for workspace layout and stack notes. **Calendaring, scheduling, and push notifications** (including Railway **backend** / `artifacts/api-server` and three-service layout) are captured in [`docs/calendaring-plan.md`](docs/calendaring-plan.md).
 
 ## Legacy Replit files
 

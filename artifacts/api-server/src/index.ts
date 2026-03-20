@@ -1,4 +1,7 @@
 import app from "./app";
+import { startNotificationCron } from "./jobs/notifications.js";
+
+startNotificationCron();
 
 const rawPort = process.env["PORT"];
 
