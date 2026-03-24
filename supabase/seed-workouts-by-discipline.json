@@ -1,0 +1,416 @@
+{
+  "meta": {
+    "source": "supabase/seed.sql",
+    "description": "Workout template rows grouped by discipline → subtrack, plus subtrack_config scheduling fields from the same seed.",
+    "subtrack_config_fields": {
+      "id": "Primary key in subtrack_config (e.g. cf_lower_body_strength).",
+      "display_name": "Human label shown in onboarding.",
+      "mandatory_days_per_week": "Base strength sessions per week (maps to subtrack_config.base_days_per_week).",
+      "flex_days_per_week": "Optional flex sessions per week (subtrack_config.flex_days_per_week).",
+      "total_weeks": "Program length in weeks (subtrack_config.total_weeks)."
+    }
+  },
+  "disciplines": {
+    "athx": {
+      "subtracks": {
+        "explosive_power": {
+          "subtrack_config": {
+            "id": "athx_explosive_power",
+            "display_name": "Explosive Power",
+            "mandatory_days_per_week": 2,
+            "flex_days_per_week": 1,
+            "total_weeks": 6
+          },
+          "workouts": [
+            {
+              "id": "athx_explosive_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Explosive Foundation — Power Development",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "athx_explosive_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Explosive — Hang Variations and Upper Power",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            }
+          ]
+        },
+        "posterior_chain_hinge": {
+          "subtrack_config": {
+            "id": "athx_posterior_chain",
+            "display_name": "Posterior Chain & Hinge",
+            "mandatory_days_per_week": 2,
+            "flex_days_per_week": 1,
+            "total_weeks": 6
+          },
+          "workouts": [
+            {
+              "id": "athx_max_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Maximal Strength — Squat and Hip Hinge",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "athx_max_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Maximal Strength — Upper Body Press and Pull",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            }
+          ]
+        },
+        "upper_body_power": {
+          "subtrack_config": {
+            "id": "athx_upper_body_power",
+            "display_name": "Upper Body Power",
+            "mandatory_days_per_week": 2,
+            "flex_days_per_week": 0,
+            "total_weeks": 6
+          },
+          "workouts": [
+            {
+              "id": "athx_cond_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Conditioning — Aerobic Strength Base",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "athx_cond_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Conditioning — Upper Body Strength Endurance",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            }
+          ]
+        }
+      }
+    },
+    "crossfit": {
+      "subtracks": {
+        "lower_body_strength": {
+          "subtrack_config": {
+            "id": "cf_lower_body_strength",
+            "display_name": "Lower Body Strength",
+            "mandatory_days_per_week": 2,
+            "flex_days_per_week": 1,
+            "total_weeks": 4
+          },
+          "workouts": [
+            {
+              "id": "cf_lower_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Lower Body Foundation — Bilateral Squat",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "cf_lower_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Lower Body — Unilateral and Hinge",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "cf_lower_w2d1",
+              "week_number": 2,
+              "day_number": 1,
+              "title": "Week 2 — Squat Intensity Up",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "cf_lower_w2d2",
+              "week_number": 2,
+              "day_number": 2,
+              "title": "Week 2 — Unilateral Load Progression",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            }
+          ]
+        },
+        "muscular_endurance": {
+          "subtrack_config": {
+            "id": "cf_muscular_endurance",
+            "display_name": "Muscular Endurance",
+            "mandatory_days_per_week": 3,
+            "flex_days_per_week": 0,
+            "total_weeks": 4
+          },
+          "workouts": [
+            {
+              "id": "cf_engine_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Engine Builder — Lower Body Strength Base",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "cf_engine_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Engine Builder — Upper Body Pull Endurance",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            }
+          ]
+        },
+        "overhead_shoulder_strength": {
+          "subtrack_config": {
+            "id": "cf_overhead_shoulder_strength",
+            "display_name": "Overhead & Shoulder Strength",
+            "mandatory_days_per_week": 2,
+            "flex_days_per_week": 1,
+            "total_weeks": 4
+          },
+          "workouts": [
+            {
+              "id": "cf_overhead_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Overhead Foundation — Strict Pressing",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "cf_overhead_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Overhead — Vertical Pulling Balance",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "cf_overhead_w2d1",
+              "week_number": 2,
+              "day_number": 1,
+              "title": "Week 2 — Pressing Load Increase",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "cf_overhead_w2d2",
+              "week_number": 2,
+              "day_number": 2,
+              "title": "Week 2 — Pulling Strength Up",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "cf_overhead_w2_flex",
+              "week_number": 2,
+              "day_number": 3,
+              "title": "Week 2 Flex — Technique Focus",
+              "is_flex_day": true,
+              "flex_day_type": "technique",
+              "flex_day_note": "This week is a good time to add the flex day if your overhead position felt restricted during the main sessions. Light loads, long pauses, quality reps."
+            }
+          ]
+        }
+      }
+    },
+    "hyrox": {
+      "subtracks": {
+        "running_economy_strength": {
+          "subtrack_config": {
+            "id": "hyrox_running_economy_strength",
+            "display_name": "Running Economy Strength",
+            "mandatory_days_per_week": 2,
+            "flex_days_per_week": 1,
+            "total_weeks": 5
+          },
+          "workouts": [
+            {
+              "id": "hyrox_run_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Running Economy — Single-Leg Foundation",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "hyrox_run_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Running Economy — Hip Drive and Carry",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            }
+          ]
+        },
+        "sled_carry_strength": {
+          "subtrack_config": {
+            "id": "hyrox_sled_carry_strength",
+            "display_name": "Sled & Loaded Carry Strength",
+            "mandatory_days_per_week": 2,
+            "flex_days_per_week": 1,
+            "total_weeks": 5
+          },
+          "workouts": [
+            {
+              "id": "hyrox_sled_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Sled Foundation — Lower Body Drive",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "hyrox_sled_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Unilateral Power — Single Leg Focus",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "hyrox_sled_w2d1",
+              "week_number": 2,
+              "day_number": 1,
+              "title": "Week 2 — Loading Up",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "hyrox_sled_w2d2",
+              "week_number": 2,
+              "day_number": 2,
+              "title": "Week 2 — Unilateral Volume",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "hyrox_sled_w1_flex",
+              "week_number": 1,
+              "day_number": 3,
+              "title": "Week 1 Flex — Volume Bonus",
+              "is_flex_day": true,
+              "flex_day_type": "volume",
+              "flex_day_note": "Good week with energy to spare? Add this session. It is shorter than your base days and focused on carry volume rather than heavy loading."
+            }
+          ]
+        },
+        "station_specific_strength": {
+          "subtrack_config": {
+            "id": "hyrox_station_strength",
+            "display_name": "Station-Specific Strength",
+            "mandatory_days_per_week": 2,
+            "flex_days_per_week": 0,
+            "total_weeks": 5
+          },
+          "workouts": [
+            {
+              "id": "hyrox_push_w1d1",
+              "week_number": 1,
+              "day_number": 1,
+              "title": "Upper Body Push — Horizontal Press Foundation",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            },
+            {
+              "id": "hyrox_push_w1d2",
+              "week_number": 1,
+              "day_number": 2,
+              "title": "Upper Body Push — Vertical Press and Pull Balance",
+              "is_flex_day": false,
+              "flex_day_type": null,
+              "flex_day_note": null
+            }
+          ]
+        }
+      }
+    }
+  },
+  "subtrack_config_without_workout_templates": [
+    {
+      "discipline": "crossfit",
+      "subtrack": "pulling_strength",
+      "subtrack_config": {
+        "id": "cf_pulling_strength",
+        "display_name": "Pulling Strength",
+        "mandatory_days_per_week": 2,
+        "flex_days_per_week": 0,
+        "total_weeks": 4
+      }
+    },
+    {
+      "discipline": "hyrox",
+      "subtrack": "strength_endurance",
+      "subtrack_config": {
+        "id": "hyrox_strength_endurance",
+        "display_name": "Strength Endurance",
+        "mandatory_days_per_week": 3,
+        "flex_days_per_week": 1,
+        "total_weeks": 5
+      }
+    },
+    {
+      "discipline": "athx",
+      "subtrack": "competition_prep",
+      "subtrack_config": {
+        "id": "athx_competition_prep",
+        "display_name": "Competition Prep",
+        "mandatory_days_per_week": 3,
+        "flex_days_per_week": 1,
+        "total_weeks": 6
+      }
+    }
+  ],
+  "summary": {
+    "total_workout_rows": 28,
+    "base_sessions": 26,
+    "flex_sessions": 2,
+    "subtracks_with_seed_workouts": [
+      "athx:explosive_power",
+      "athx:posterior_chain_hinge",
+      "athx:upper_body_power",
+      "crossfit:lower_body_strength",
+      "crossfit:muscular_endurance",
+      "crossfit:overhead_shoulder_strength",
+      "hyrox:running_economy_strength",
+      "hyrox:sled_carry_strength",
+      "hyrox:station_specific_strength"
+    ],
+    "subtracks_config_only_no_workout_rows_in_seed": [
+      "crossfit:pulling_strength",
+      "hyrox:strength_endurance",
+      "athx:competition_prep"
+    ]
+  }
+}
