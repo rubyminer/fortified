@@ -356,6 +356,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.99.2
         version: 2.99.2
+      serve:
+        specifier: ^14.2.6
+        version: 14.2.6
     devDependencies:
       '@hookform/resolvers':
         specifier: ^3.10.0

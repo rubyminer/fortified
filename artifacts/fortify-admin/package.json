@@ -7,6 +7,7 @@
     "dev": "vite --config vite.config.ts --host 0.0.0.0",
     "build": "vite build --config vite.config.ts",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
+    "start:static": "sh -c 'exec serve -s dist/public -l \"tcp://0.0.0.0:$PORT\"'",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
@@ -75,6 +76,7 @@
     "zod": "catalog:"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.99.2"
+    "@supabase/supabase-js": "^2.99.2",
+    "serve": "^14.2.6"
   }
 }

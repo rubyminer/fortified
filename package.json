@@ -19,7 +19,8 @@
     "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
     "dev:fortify": "pnpm --filter @workspace/fortify dev",
     "dev:admin": "pnpm --filter @workspace/fortify-admin dev",
-    "start:fortify": "pnpm --filter @workspace/fortify run start:static"
+    "start:fortify": "pnpm --filter @workspace/fortify run start:static",
+    "start:admin": "pnpm --filter @workspace/fortify-admin run start:static"
   },
   "private": true,
   "devDependencies": {
