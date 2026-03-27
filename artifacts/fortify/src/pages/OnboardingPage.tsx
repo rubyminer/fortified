@@ -206,7 +206,7 @@ export default function OnboardingPage() {
 
   if (step === 5 && user) {
     return (
-      <div className="min-h-screen bg-background flex flex-col p-6 justify-center max-w-lg mx-auto">
+      <div className="min-h-screen bg-background flex flex-col px-6 pb-6 pt-[calc(1.5rem+env(safe-area-inset-top,0px))] justify-center max-w-lg mx-auto">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           <h2 className="text-3xl font-display uppercase tracking-wider text-white">Stay on track</h2>
           <p className="text-muted-foreground text-lg leading-relaxed">
@@ -231,9 +231,9 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col p-6">
+    <div className="min-h-screen bg-background flex flex-col px-6 pb-6 pt-[calc(1.5rem+env(safe-area-inset-top,0px))]">
       <div className="flex-1 flex flex-col max-w-lg w-full mx-auto justify-center relative">
-        <div className="absolute top-10 left-0 right-0">
+        <div className="absolute top-4 left-0 right-0 sm:top-10">
           <div className="flex justify-between mb-2">
             {[1, 2, 3, 4].map(i => (
               <div

@@ -18,7 +18,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex flex-col min-h-[100dvh] bg-background text-foreground pb-[80px]">
-      <header className="sticky top-0 z-50 flex items-center justify-between px-6 py-4 bg-background/80 backdrop-blur-xl border-b border-white/5">
+      <header className="sticky top-0 z-50 pt-safe bg-background/80 backdrop-blur-xl border-b border-white/5">
+        <div className="flex items-center justify-between px-6 py-4">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded bg-primary flex items-center justify-center text-background">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242" /><path d="M12 12v9" /><path d="m8 17 4 4 4-4" /></svg>
@@ -30,6 +31,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             {profile.discipline}
           </div>
         )}
+        </div>
       </header>
 
       <main className="flex-1 max-w-lg w-full mx-auto p-4 md:p-6 flex flex-col gap-6">

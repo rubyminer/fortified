@@ -60,7 +60,7 @@ export default function AuthPage() {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col justify-center px-6 py-12 lg:px-16 lg:py-24 relative z-10">
+      <div className="flex-1 flex flex-col justify-center px-6 pt-[calc(env(safe-area-inset-top,0px)+2rem)] pb-12 lg:px-16 lg:py-24 relative z-10">
         <div className="lg:hidden absolute inset-0 -z-10">
            <img 
             src={`${import.meta.env.BASE_URL}images/hero-bg.png`} 

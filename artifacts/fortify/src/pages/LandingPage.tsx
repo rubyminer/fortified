@@ -43,7 +43,8 @@ export default function LandingPage() {
     <div className="min-h-screen bg-black text-white font-sans overflow-x-hidden">
 
       {/* ── NAV ── */}
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 h-16 bg-black/90 backdrop-blur-md border-b border-white/5">
+      <header className="fixed top-0 left-0 right-0 z-50 pt-safe bg-black/90 backdrop-blur-md border-b border-white/5">
+        <div className="flex h-14 items-center justify-between px-6 md:px-12">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded bg-primary flex items-center justify-center text-white">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
@@ -82,10 +83,11 @@ export default function LandingPage() {
             Start For Free
           </Link>
         </div>
+        </div>
       </header>
 
       {/* ── HERO ── */}
-      <section className="relative flex flex-col items-center justify-center min-h-[80vh] text-center px-6 pt-16">
+      <section className="relative flex flex-col items-center justify-center min-h-[80vh] text-center px-6 pt-[calc(3.5rem+env(safe-area-inset-top,0px))] md:pt-20">
         <div className="mb-6 inline-block border border-white/20 rounded-full px-4 py-1.5 text-xs uppercase tracking-[0.2em] text-white/70">
           Supplemental Strength Programming
         </div>
