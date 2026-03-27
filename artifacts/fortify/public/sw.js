@@ -1,4 +1,5 @@
-const CACHE_NAME = 'fortify-v1';
+// Bump when fetch / caching rules change so clients drop old caches.
+const CACHE_NAME = 'fortify-v2';
 
 // Derive base path from the SW's own location (e.g. /fortify/ or /)
 const BASE_PATH = self.location.pathname.replace(/\/sw\.js$/, '') || '';
@@ -68,6 +69,29 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const path = url.pathname;
+  const isNavigation =
+    event.request.mode === 'navigate' || event.request.destination === 'document';
+  const isConfigEnv = path.endsWith('/config-env.js');
+
+  // Full page loads / refresh: always network-first. Cache-first index.html after deploy
+  // leaves PWA (especially iOS) on a stale HTML that points at deleted hashed JS → white screen.
+  if (isNavigation || isConfigEnv) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200 && response.type === 'basic') {
+            const clone = response.clone();
+            void caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        })
+        .catch(() => caches.match(BASE_PATH + '/index.html'))
+    );
+    return;
+  }
+
+  // Hashed build assets (/assets/*): cache-first is safe once HTML is current.
   event.respondWith(
     caches.match(event.request).then((cached) => {
       if (cached) return cached;
@@ -76,14 +100,8 @@ self.addEventListener('fetch', (event) => {
           return response;
         }
         const cloned = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, cloned);
-        });
+        void caches.open(CACHE_NAME).then((cache) => cache.put(event.request, cloned));
         return response;
-      }).catch(() => {
-        if (event.request.destination === 'document') {
-          return caches.match(BASE_PATH + '/index.html');
-        }
       });
     })
   );
