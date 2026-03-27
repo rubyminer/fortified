@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { useAllSubtrackConfig, type SubtrackConfigRow } from '@/hooks/use-subtrack-config';
 import { formatSessionsPerWeekLabel } from '@/lib/frequency-label';
 import { populateCalendar, normalizeTimeToPg } from '@/lib/populate-calendar';
+import { getVapidPublicKey } from '@/lib/runtime-env';
 import { suggestSupplementalDays } from '@/lib/supplemental-day-suggestions';
 import type { SupplementalTiming } from '@/lib/types';
 
@@ -568,7 +569,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 async function trySubscribePush(userId: string): Promise<void> {
-  const vapid = import.meta.env.VITE_VAPID_PUBLIC_KEY as string | undefined;
+  const vapid = getVapidPublicKey();
   if (!vapid || typeof Notification === 'undefined') return;
   const perm = await Notification.requestPermission();
   if (perm !== 'granted') return;

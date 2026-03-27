@@ -1,14 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
+import { getSupabaseAnonKey, getSupabaseUrl } from '@/lib/runtime-env';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = getSupabaseUrl();
+const supabaseAnonKey = getSupabaseAnonKey();
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
     'Missing Supabase environment variables.\n' +
-    'Copy artifacts/fortify/.env.example to artifacts/fortify/.env and fill in:\n' +
-    '  VITE_SUPABASE_URL=https://your-project.supabase.co\n' +
-    '  VITE_SUPABASE_ANON_KEY=your-anon-key'
+      'Local: copy artifacts/fortify/.env.example to .env and set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.\n' +
+      'Production (Railway): set those on the service; they are applied at container start via config-env.js.\n'
   );
 }
 

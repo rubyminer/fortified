@@ -1,14 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
+import { getSupabaseAnonKey, getSupabaseUrl } from '@/lib/runtime-env';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = getSupabaseUrl();
+const supabaseAnonKey = getSupabaseAnonKey();
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
     'Missing Supabase environment variables.\n' +
-    'Copy .env.example to .env and fill in:\n' +
-    '  VITE_SUPABASE_URL=https://your-project.supabase.co\n' +
-    '  VITE_SUPABASE_ANON_KEY=your-anon-key'
+      'Local: copy .env.example to .env and set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.\n' +
+      'Production: set those on the host; they are written at container start to config-env.js.\n'
   );
 }
 

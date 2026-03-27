@@ -1,4 +1,4 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
@@ -15,102 +15,79 @@ const basePath = process.env.BASE_PATH ?? "/";
 
 const fortifyRoot = path.resolve(import.meta.dirname);
 
-export default defineConfig(async ({ mode }) => {
-  // .env files (local) + process.env (CI / Railway). Explicit `define` so
-  // VITE_* from the shell are always inlined; default Vite env resolution
-  // can miss them in some monorepo / Railpack build contexts.
-  const fileEnv = loadEnv(mode, fortifyRoot, "");
-  const envEmbed = {
-    VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL ?? fileEnv.VITE_SUPABASE_URL ?? "",
-    VITE_SUPABASE_ANON_KEY:
-      process.env.VITE_SUPABASE_ANON_KEY ?? fileEnv.VITE_SUPABASE_ANON_KEY ?? "",
-    VITE_VAPID_PUBLIC_KEY:
-      process.env.VITE_VAPID_PUBLIC_KEY ?? fileEnv.VITE_VAPID_PUBLIC_KEY ?? "",
-  };
-
-  return {
-    base: basePath,
-    define: {
-      "import.meta.env.VITE_SUPABASE_URL": JSON.stringify(envEmbed.VITE_SUPABASE_URL),
-      "import.meta.env.VITE_SUPABASE_ANON_KEY": JSON.stringify(
-        envEmbed.VITE_SUPABASE_ANON_KEY,
-      ),
-      "import.meta.env.VITE_VAPID_PUBLIC_KEY": JSON.stringify(
-        envEmbed.VITE_VAPID_PUBLIC_KEY,
-      ),
-    },
-    plugins: [
-      react(),
-      tailwindcss(),
-      runtimeErrorOverlay(),
-      VitePWA({
-        registerType: "autoUpdate",
-        strategies: "injectManifest",
-        srcDir: "public",
-        filename: "sw.js",
-        injectManifest: {
-          swSrc: "public/sw.js",
-          swDest: "dist/public/sw.js",
-          injectionPoint: undefined,
-        },
-        manifest: {
-          name: "Fortify — Functional Strength",
-          short_name: "Fortify",
-          description: "Supplemental strength training for CrossFit, Hyrox, and ATHX athletes",
-          start_url: "/",
-          display: "standalone",
-          background_color: "#0a0a0a",
-          theme_color: "#ff5500",
-          orientation: "portrait-primary",
-          categories: ["health", "fitness", "sports"],
-          icons: [
-            { src: "/icons/icon-72.png", sizes: "72x72", type: "image/png" },
-            { src: "/icons/icon-96.png", sizes: "96x96", type: "image/png" },
-            { src: "/icons/icon-128.png", sizes: "128x128", type: "image/png" },
-            { src: "/icons/icon-144.png", sizes: "144x144", type: "image/png" },
-            { src: "/icons/icon-152.png", sizes: "152x152", type: "image/png" },
-            { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
-            { src: "/icons/icon-384.png", sizes: "384x384", type: "image/png" },
-            { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
-          ],
-        },
-      }),
-      ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
-        ? [
-            await import("@replit/vite-plugin-cartographer").then((m) =>
-              m.cartographer({
-                root: path.resolve(import.meta.dirname, ".."),
-              }),
-            ),
-            await import("@replit/vite-plugin-dev-banner").then((m) => m.devBanner()),
-          ]
-        : []),
-    ],
-    resolve: {
-      alias: {
-        "@": path.resolve(import.meta.dirname, "src"),
-        "@assets": path.resolve(import.meta.dirname, "..", "..", "attached_assets"),
+export default defineConfig(async () => ({
+  base: basePath,
+  plugins: [
+    react(),
+    tailwindcss(),
+    runtimeErrorOverlay(),
+    VitePWA({
+      registerType: "autoUpdate",
+      strategies: "injectManifest",
+      srcDir: "public",
+      filename: "sw.js",
+      injectManifest: {
+        swSrc: "public/sw.js",
+        swDest: "dist/public/sw.js",
+        injectionPoint: undefined,
       },
-      dedupe: ["react", "react-dom"],
-    },
-    root: fortifyRoot,
-    build: {
-      outDir: path.resolve(import.meta.dirname, "dist/public"),
-      emptyOutDir: true,
-    },
-    server: {
-      port,
-      host: "0.0.0.0",
-      allowedHosts: true,
-      fs: {
-        strict: true,
-        deny: ["**/.*"],
+      manifest: {
+        name: "Fortify — Functional Strength",
+        short_name: "Fortify",
+        description: "Supplemental strength training for CrossFit, Hyrox, and ATHX athletes",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#0a0a0a",
+        theme_color: "#ff5500",
+        orientation: "portrait-primary",
+        categories: ["health", "fitness", "sports"],
+        icons: [
+          { src: "/icons/icon-72.png", sizes: "72x72", type: "image/png" },
+          { src: "/icons/icon-96.png", sizes: "96x96", type: "image/png" },
+          { src: "/icons/icon-128.png", sizes: "128x128", type: "image/png" },
+          { src: "/icons/icon-144.png", sizes: "144x144", type: "image/png" },
+          { src: "/icons/icon-152.png", sizes: "152x152", type: "image/png" },
+          { src: "/icons/icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+          { src: "/icons/icon-384.png", sizes: "384x384", type: "image/png" },
+          { src: "/icons/icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+        ],
       },
+    }),
+    ...(process.env.NODE_ENV !== "production" && process.env.REPL_ID !== undefined
+      ? [
+          await import("@replit/vite-plugin-cartographer").then((m) =>
+            m.cartographer({
+              root: path.resolve(import.meta.dirname, ".."),
+            }),
+          ),
+          await import("@replit/vite-plugin-dev-banner").then((m) => m.devBanner()),
+        ]
+      : []),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(import.meta.dirname, "src"),
+      "@assets": path.resolve(import.meta.dirname, "..", "..", "attached_assets"),
     },
-    preview: {
-      port,
-      host: "0.0.0.0",
-      allowedHosts: true,
+    dedupe: ["react", "react-dom"],
+  },
+  root: fortifyRoot,
+  build: {
+    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    emptyOutDir: true,
+  },
+  server: {
+    port,
+    host: "0.0.0.0",
+    allowedHosts: true,
+    fs: {
+      strict: true,
+      deny: ["**/.*"],
     },
-  };
-});
+  },
+  preview: {
+    port,
+    host: "0.0.0.0",
+    allowedHosts: true,
+  },
+}));
